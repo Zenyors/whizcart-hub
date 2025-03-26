@@ -3,12 +3,33 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VendorDetail } from "@/api/vendorApi";
+import { Mail, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface VendorDetailHeaderProps {
   vendor: VendorDetail;
 }
 
 const VendorDetailHeader = ({ vendor }: VendorDetailHeaderProps) => {
+  const { toast } = useToast();
+
+  const handleContact = () => {
+    toast({
+      title: "Contact Vendor",
+      description: `Contacting ${vendor.name} at ${vendor.contact.email}`,
+    });
+    // In a real app, this might open a contact form or email client
+    window.open(`mailto:${vendor.contact.email}`);
+  };
+
+  const handleEdit = () => {
+    toast({
+      title: "Edit Vendor",
+      description: `Editing vendor details for ${vendor.name}`,
+    });
+    // In a real app, this might navigate to an edit page
+  };
+
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
@@ -26,8 +47,14 @@ const VendorDetailHeader = ({ vendor }: VendorDetailHeaderProps) => {
         </div>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline">Contact</Button>
-        <Button>Edit Details</Button>
+        <Button variant="outline" onClick={handleContact}>
+          <Mail className="mr-2 h-4 w-4" />
+          Contact
+        </Button>
+        <Button onClick={handleEdit}>
+          <Edit className="mr-2 h-4 w-4" />
+          Edit Details
+        </Button>
       </div>
     </div>
   );

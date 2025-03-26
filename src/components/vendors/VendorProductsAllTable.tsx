@@ -3,7 +3,10 @@ import React from "react";
 import { 
   Package, 
   AlertCircle, 
-  CheckCircle 
+  CheckCircle,
+  Edit,
+  Trash2,
+  Eye
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +20,13 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VendorProductWithVendor } from "@/api/types/vendor.types";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 interface VendorProductsAllTableProps {
   products: VendorProductWithVendor[];
@@ -24,6 +34,30 @@ interface VendorProductsAllTableProps {
 }
 
 const VendorProductsAllTable = ({ products, isLoading }: VendorProductsAllTableProps) => {
+  const { toast } = useToast();
+
+  const handleEdit = (productId: string) => {
+    toast({
+      title: "Edit Product",
+      description: `Editing product ${productId}`,
+    });
+  };
+
+  const handleDelete = (productId: string) => {
+    toast({
+      title: "Delete Product",
+      description: `Deleting product ${productId}`,
+      variant: "destructive",
+    });
+  };
+
+  const handleView = (productId: string) => {
+    toast({
+      title: "View Product",
+      description: `Viewing product ${productId}`,
+    });
+  };
+
   return (
     <Card className="w-full overflow-hidden">
       <CardHeader>
@@ -40,7 +74,7 @@ const VendorProductsAllTable = ({ products, isLoading }: VendorProductsAllTableP
                 <TableHead>Category</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Stock Status</TableHead>
-                <TableHead>Quality Issues</TableHead>
+                <TableHead>Quality</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -92,34 +126,52 @@ const VendorProductsAllTable = ({ products, isLoading }: VendorProductsAllTableP
                       {product.qualityIssues ? (
                         <div className="flex items-center gap-1 text-red-500">
                           <AlertCircle className="h-4 w-4" />
-                          <span>{product.qualityIssues}</span>
+                          <span>{product.qualityScore}/100</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1 text-green-500">
                           <CheckCircle className="h-4 w-4" />
-                          <span>None</span>
+                          <span>{product.qualityScore}/100</span>
                         </div>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                        >
-                          <circle cx="12" cy="12" r="1" />
-                          <circle cx="19" cy="12" r="1" />
-                          <circle cx="5" cy="12" r="1" />
-                        </svg>
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="h-4 w-4"
+                            >
+                              <circle cx="12" cy="12" r="1" />
+                              <circle cx="19" cy="12" r="1" />
+                              <circle cx="5" cy="12" r="1" />
+                            </svg>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleView(product.id)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEdit(product.id)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(product.id)} className="text-red-500">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))

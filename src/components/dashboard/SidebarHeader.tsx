@@ -10,7 +10,7 @@ const SidebarHeader = () => {
         <div className="rounded-md bg-primary p-1">
           <ShoppingCart className="h-5 w-5 text-white" />
         </div>
-        <span className="text-xl font-bold tracking-tight">WhizCart</span>
+        <span className="text-xl font-bold tracking-tight">WhizCartt</span>
       </Link>
     </div>
   );
