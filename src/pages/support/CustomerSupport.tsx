@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 // Component imports
-import SupportHome from "@/components/support/SupportHome";
+import SupportHome from "@/components/support/home/SupportHome";
 import KnowledgeBase from "@/components/support/KnowledgeBase";
 import TicketList from "@/components/support/TicketList";
 import CreateTicket from "@/components/support/CreateTicket";
