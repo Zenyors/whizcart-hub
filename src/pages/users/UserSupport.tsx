@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -58,7 +57,6 @@ import PageHeader from "@/components/shared/PageHeader";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
-// Mock support tickets
 const mockTickets = Array.from({ length: 20 }).map((_, i) => {
   const statusOptions = ["Open", "In Progress", "Resolved", "Closed"];
   const status = statusOptions[Math.floor(Math.random() * statusOptions.length)];
@@ -67,6 +65,8 @@ const mockTickets = Array.from({ length: 20 }).map((_, i) => {
   const categoryOptions = ["Order Issue", "Product Inquiry", "Return Request", "Account Problem", "Payment Issue", "Shipping Question"];
   const category = categoryOptions[Math.floor(Math.random() * categoryOptions.length)];
   
+  const hasPhone = Math.random() > 0.3;
+  
   return {
     id: `TKT-${10000 + i}`,
     customer: {
@@ -74,6 +74,7 @@ const mockTickets = Array.from({ length: 20 }).map((_, i) => {
       email: `customer${i + 1}@example.com`,
       id: `USR-${1000 + i}`,
       avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=User${i}`,
+      phone: hasPhone ? `+1${Math.floor(1000000000 + Math.random() * 9000000000)}` : undefined,
     },
     subject: category,
     description: `I need help with my ${category.toLowerCase()}. Please assist as soon as possible.`,
@@ -190,6 +191,7 @@ const UserSupport = () => {
         email: formData.get('customerEmail') as string,
         id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
         avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.get('customerName')}`,
+        phone: formData.get('customerPhone') as string || undefined,
       },
       subject: formData.get('subject') as string,
       description: formData.get('description') as string,
@@ -257,6 +259,17 @@ const UserSupport = () => {
     firstResolutionTime: "8.5 hours",
   };
 
+  const handleCallCustomer = () => {
+    if (selectedTicket?.customer?.phone) {
+      window.location.href = `tel:${selectedTicket.customer.phone}`;
+    } else {
+      toast({
+        title: "No Phone Number",
+        description: "Customer phone number is not available",
+      });
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -313,6 +326,18 @@ const UserSupport = () => {
                         placeholder="customer@example.com"
                         className="col-span-3"
                         required
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="customerPhone" className="text-right">
+                        Phone
+                      </Label>
+                      <Input
+                        id="customerPhone"
+                        name="customerPhone"
+                        type="tel"
+                        placeholder="Optional phone number"
+                        className="col-span-3"
                       />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
@@ -532,16 +557,7 @@ const UserSupport = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
-                      <Button size="sm" onClick={() => {
-                        if (selectedTicket.customer.phone) {
-                          window.location.href = `tel:+${selectedTicket.customer.phone}`;
-                        } else {
-                          toast({
-                            title: "No Phone Number",
-                            description: "Customer phone number is not available",
-                          });
-                        }
-                      }}>
+                      <Button size="sm" onClick={handleCallCustomer}>
                         <Phone className="h-4 w-4 mr-1" />
                         Call
                       </Button>
@@ -561,6 +577,9 @@ const UserSupport = () => {
                         <div>
                           <h3 className="text-sm font-medium">{selectedTicket.customer.name}</h3>
                           <p className="text-xs text-muted-foreground">{selectedTicket.customer.email}</p>
+                          {selectedTicket.customer.phone && (
+                            <p className="text-xs text-muted-foreground">{selectedTicket.customer.phone}</p>
+                          )}
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => navigate(`/users/${selectedTicket.customer.id}`)}>
                           <User className="h-4 w-4 mr-1" />
