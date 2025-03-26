@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
     <div
       ref={sidebarRef}
       className={cn(
-        "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r bg-background transition-transform duration-300 ease-in-out lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r bg-background transition-transform duration-300 ease-in-out lg:static lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >

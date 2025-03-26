@@ -61,7 +61,7 @@ const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
           <Menu size={20} />
         </Button>
         
-        <div className={`hidden sm:flex items-center relative transition-all duration-200 ${searchFocused ? 'w-72' : 'w-60'}`}>
+        <div className={`relative transition-all duration-200 ${searchFocused ? 'w-72' : 'w-60'} hidden sm:flex items-center`}>
           <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
