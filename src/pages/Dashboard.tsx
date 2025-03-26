@@ -24,13 +24,13 @@ const Dashboard = () => {
     <div className="flex min-h-screen bg-muted/5">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
-      <div className="flex-1 transition-all duration-300">
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-0" : ""}`}>
         <Header 
           isSidebarOpen={sidebarOpen} 
           toggleSidebar={toggleSidebar} 
         />
         
-        <main className="px-4 py-6 md:px-6 lg:px-8 max-w-7xl mx-auto">
+        <main className="container mx-auto px-4 py-6 md:px-6 lg:px-8">
           <div className="mb-8 flex flex-col">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
@@ -42,7 +42,7 @@ const Dashboard = () => {
             <StatCards />
           </div>
           
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-7">
             <RevenueChart />
             <RecentActivity />
           </div>

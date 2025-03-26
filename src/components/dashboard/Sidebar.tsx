@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      <SidebarHeader toggleSidebar={toggleSidebar} />
+      <SidebarHeader />
       
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="flex flex-col space-y-1">

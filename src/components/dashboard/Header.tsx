@@ -56,7 +56,7 @@ const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
           size="icon"
           onClick={toggleSidebar}
           aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-          className="lg:hidden"
+          className="mr-2"
         >
           <Menu size={20} />
         </Button>

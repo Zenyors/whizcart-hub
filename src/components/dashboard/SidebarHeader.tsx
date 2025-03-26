@@ -1,16 +1,10 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
-interface SidebarHeaderProps {
-  toggleSidebar: () => void;
-}
-
-const SidebarHeader = ({ toggleSidebar }: SidebarHeaderProps) => {
+const SidebarHeader = () => {
   return (
-    <div className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-4">
+    <div className="sticky top-0 z-10 flex h-16 items-center border-b bg-background px-4">
       <Link to="/dashboard" className="flex items-center gap-2">
         <div className="rounded-md bg-primary p-1">
           <svg
@@ -31,16 +25,6 @@ const SidebarHeader = ({ toggleSidebar }: SidebarHeaderProps) => {
         </div>
         <span className="text-xl font-bold tracking-tight">WhizCart</span>
       </Link>
-      
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        onClick={toggleSidebar} 
-        className="ml-auto lg:hidden"
-        aria-label="Toggle sidebar"
-      >
-        <Menu size={18} />
-      </Button>
     </div>
   );
 };
