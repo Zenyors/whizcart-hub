@@ -15,6 +15,7 @@ interface StatCardProps {
   };
   className?: string;
   isLoading?: boolean;
+  style?: React.CSSProperties; // Add style prop to the interface
 }
 
 export const StatCard = ({
@@ -25,6 +26,7 @@ export const StatCard = ({
   trend,
   className,
   isLoading = false,
+  style, // Add style to the component props
 }: StatCardProps) => {
   return (
     <Card
@@ -32,6 +34,7 @@ export const StatCard = ({
         "overflow-hidden transition-all duration-200 card-shadow",
         className
       )}
+      style={style} // Pass the style prop to the Card component
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
