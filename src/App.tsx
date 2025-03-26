@@ -22,9 +22,11 @@ import Vendors from "./pages/vendors/Vendors";
 import VendorDetails from "./pages/vendors/VendorDetails";
 import VendorProducts from "./pages/vendors/VendorProducts";
 import VendorPayouts from "./pages/vendors/VendorPayouts";
+import AddProduct from "./pages/vendors/AddProduct";
 
 // New Routes
 import DeliveryPartners from "./pages/delivery/DeliveryPartners";
+import AddDeliveryPartner from "./pages/delivery/AddDeliveryPartner";
 import Orders from "./pages/orders/Orders";
 import Inventory from "./pages/inventory/Inventory";
 import Reports from "./pages/reports/Reports";
@@ -59,10 +61,14 @@ const App = () => (
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:id" element={<VendorDetails />} />
           <Route path="/vendors/products" element={<VendorProducts />} />
+          <Route path="/vendors/products/add" element={<AddProduct />} />
           <Route path="/vendors/payouts" element={<VendorPayouts />} />
           
-          {/* New Routes */}
+          {/* Delivery Routes */}
           <Route path="/delivery-partners" element={<DeliveryPartners />} />
+          <Route path="/delivery-partners/add" element={<AddDeliveryPartner />} />
+          
+          {/* New Routes */}
           <Route path="/orders" element={<Orders />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/reports" element={<Reports />} />

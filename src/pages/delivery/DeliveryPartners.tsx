@@ -1,7 +1,7 @@
-
 import React from "react";
 import { Helmet } from 'react-helmet';
 import { Truck, MapPin, Clock, Users, Plus, IndianRupee } from "lucide-react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,9 +24,11 @@ const DeliveryPartners = () => {
               <MapPin className="h-4 w-4" />
               View Map
             </Button>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Partner
+            <Button className="gap-2" asChild>
+              <Link to="/delivery-partners/add">
+                <Plus className="h-4 w-4" />
+                Add Partner
+              </Link>
             </Button>
           </PageHeader>
 
@@ -101,7 +103,9 @@ const DeliveryPartners = () => {
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Button variant="outline">View Documentation</Button>
-                  <Button>Get Started</Button>
+                  <Button asChild>
+                    <Link to="/delivery-partners/add">Get Started</Link>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from 'react-helmet';
 import { PlusCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -47,9 +48,11 @@ const VendorProducts = () => {
             title="Vendor Products"
             description="Browse and manage products from all vendors"
           >
-            <Button className="gap-2">
-              <PlusCircle className="h-4 w-4" />
-              Add Product
+            <Button className="gap-2" asChild>
+              <Link to="/vendors/products/add">
+                <PlusCircle className="h-4 w-4" />
+                Add Product
+              </Link>
             </Button>
           </PageHeader>
 

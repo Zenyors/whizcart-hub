@@ -54,6 +54,28 @@ const VendorQuickActions: React.FC<VendorQuickActionsProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  // Update the default actions to include the add product action
+  const updatedActions = actions.map(action => {
+    if (action.title === "View Products") {
+      return {
+        ...action,
+        title: "View Products",
+        path: "/vendors/products"
+      };
+    }
+    return action;
+  });
+
+  // Add "Add New Product" action if it doesn't exist
+  const hasAddProduct = updatedActions.some(action => action.title === "Add New Product");
+  if (!hasAddProduct) {
+    updatedActions.splice(2, 0, {
+      title: "Add New Product",
+      icon: Package,
+      path: "/vendors/products/add"
+    });
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -62,7 +84,7 @@ const VendorQuickActions: React.FC<VendorQuickActionsProps> = ({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-3">
-          {actions.map((action) => (
+          {updatedActions.map((action) => (
             <Button 
               key={action.title}
               variant="outline"
