@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Helmet } from 'react-helmet';
 import { Truck, MapPin, Clock, Users, Plus, IndianRupee } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,8 +8,21 @@ import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import VendorsMapDialog from "@/components/vendors/VendorsMapDialog";
+
+// Mock delivery partners for the map view
+const mockDeliveryPartners = Array.from({ length: 12 }).map((_, index) => ({
+  id: `dp-${index + 1}`,
+  name: `Delivery Partner ${index + 1}`,
+  location: {
+    lat: 40 + Math.random() * 10,
+    lng: -100 + Math.random() * 50,
+  },
+}));
 
 const DeliveryPartners = () => {
+  const [mapDialogOpen, setMapDialogOpen] = useState(false);
+
   return (
     <>
       <Helmet>
@@ -20,7 +34,7 @@ const DeliveryPartners = () => {
             title="Delivery Partners"
             description="Manage your delivery network and logistics partners"
           >
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={() => setMapDialogOpen(true)}>
               <MapPin className="h-4 w-4" />
               View Map
             </Button>
@@ -110,6 +124,14 @@ const DeliveryPartners = () => {
               </div>
             </div>
           </Card>
+          
+          {/* Map Dialog */}
+          <VendorsMapDialog
+            open={mapDialogOpen}
+            onOpenChange={setMapDialogOpen}
+            vendors={[]} // No vendors for this view, just delivery partners
+            deliveryPartners={mockDeliveryPartners}
+          />
         </div>
       </DashboardLayout>
     </>
