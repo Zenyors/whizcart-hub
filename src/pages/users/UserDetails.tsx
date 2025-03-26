@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
@@ -38,6 +39,11 @@ import {
 } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 // Mock user data
 const mockUserDetails = {
@@ -87,6 +93,33 @@ const mockTickets = Array.from({ length: 3 }).map((_, i) => ({
 const UserDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
+  const handleEmailClick = () => {
+    toast({
+      title: "Email Sent",
+      description: `Email client opened for ${mockUserDetails.email}`,
+    });
+    window.location.href = `mailto:${mockUserDetails.email}`;
+  };
+
+  const handleCallClick = () => {
+    toast({
+      title: "Calling User",
+      description: `Initiating call to ${mockUserDetails.phone}`,
+    });
+    window.location.href = `tel:${mockUserDetails.phone.replace(/\s/g, '')}`;
+  };
+
+  const handleEditProfileSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Profile Updated",
+      description: "User profile has been successfully updated.",
+    });
+    setIsEditDialogOpen(false);
+  };
 
   return (
     <DashboardLayout>
@@ -124,18 +157,93 @@ const UserDetails = () => {
             </div>
             
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" className="flex items-center gap-1">
+              <Button variant="outline" className="flex items-center gap-1" onClick={handleEmailClick}>
                 <Mail className="h-4 w-4" />
                 <span>Email</span>
               </Button>
-              <Button variant="outline" className="flex items-center gap-1">
+              <Button variant="outline" className="flex items-center gap-1" onClick={handleCallClick}>
                 <Phone className="h-4 w-4" />
                 <span>Call</span>
               </Button>
-              <Button className="flex items-center gap-1">
-                <UserIcon className="h-4 w-4" />
-                <span>Edit Profile</span>
-              </Button>
+              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="flex items-center gap-1">
+                    <UserIcon className="h-4 w-4" />
+                    <span>Edit Profile</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[525px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit User Profile</DialogTitle>
+                    <DialogDescription>
+                      Make changes to the user's profile information
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleEditProfileSubmit}>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Name
+                        </Label>
+                        <Input
+                          id="name"
+                          defaultValue={mockUserDetails.name}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="email" className="text-right">
+                          Email
+                        </Label>
+                        <Input
+                          id="email"
+                          defaultValue={mockUserDetails.email}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="phone" className="text-right">
+                          Phone
+                        </Label>
+                        <Input
+                          id="phone"
+                          defaultValue={mockUserDetails.phone}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="segment" className="text-right">
+                          Segment
+                        </Label>
+                        <select 
+                          id="segment"
+                          defaultValue={mockUserDetails.segment}
+                          className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 col-span-3"
+                        >
+                          <option value="Regular">Regular</option>
+                          <option value="VIP">VIP</option>
+                          <option value="New">New</option>
+                          <option value="At Risk">At Risk</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-4 items-start gap-4">
+                        <Label htmlFor="notes" className="text-right">
+                          Notes
+                        </Label>
+                        <Textarea
+                          id="notes"
+                          defaultValue={mockUserDetails.notes}
+                          className="col-span-3"
+                          rows={4}
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit">Save changes</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>

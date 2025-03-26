@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -47,12 +48,15 @@ import {
   User,
   Mail,
   Phone,
-  Filter
+  Filter,
+  Plus
 } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 // Mock support tickets
 const mockTickets = Array.from({ length: 20 }).map((_, i) => {
@@ -106,8 +110,10 @@ const UserSupport = () => {
   const [selectedTab, setSelectedTab] = useState("all");
   const [selectedTicket, setSelectedTicket] = useState<(typeof mockTickets)[0] | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [isNewTicketDialogOpen, setIsNewTicketDialogOpen] = useState(false);
+  const [updatedTickets, setUpdatedTickets] = useState(mockTickets);
 
-  const filteredTickets = mockTickets.filter(ticket => {
+  const filteredTickets = updatedTickets.filter(ticket => {
     const matchesSearch = 
       ticket.customer.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       ticket.customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -137,6 +143,78 @@ const UserSupport = () => {
     });
     
     setReplyText("");
+  };
+
+  const handleStatusChange = (newStatus: string) => {
+    if (!selectedTicket) return;
+
+    const updatedTicketsList = updatedTickets.map(ticket => 
+      ticket.id === selectedTicket.id ? { ...ticket, status: newStatus as any } : ticket
+    );
+    
+    setUpdatedTickets(updatedTicketsList);
+    setSelectedTicket(prev => prev ? { ...prev, status: newStatus as any } : null);
+    
+    toast({
+      title: "Status Updated",
+      description: `Ticket status changed to ${newStatus}`,
+    });
+  };
+
+  const handleAssignTicket = (agent: string | null) => {
+    if (!selectedTicket) return;
+
+    const updatedTicketsList = updatedTickets.map(ticket => 
+      ticket.id === selectedTicket.id ? { ...ticket, assignedTo: agent } : ticket
+    );
+    
+    setUpdatedTickets(updatedTicketsList);
+    setSelectedTicket(prev => prev ? { ...prev, assignedTo: agent } : null);
+    
+    toast({
+      title: "Agent Assigned",
+      description: agent ? `Ticket assigned to ${agent}` : "Ticket unassigned",
+    });
+  };
+
+  const handleCreateNewTicket = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    const newTicket = {
+      id: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
+      customer: {
+        name: formData.get('customerName') as string,
+        email: formData.get('customerEmail') as string,
+        id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.get('customerName')}`,
+      },
+      subject: formData.get('subject') as string,
+      description: formData.get('description') as string,
+      status: "Open",
+      priority: formData.get('priority') as string,
+      category: formData.get('category') as string,
+      createdAt: new Date().toLocaleDateString(),
+      updatedAt: new Date().toLocaleDateString(),
+      assignedTo: null,
+      messages: [
+        {
+          sender: "Customer",
+          text: formData.get('description') as string,
+          timestamp: new Date().toLocaleString(),
+        }
+      ],
+    };
+    
+    setUpdatedTickets([newTicket, ...updatedTickets]);
+    setIsNewTicketDialogOpen(false);
+    
+    toast({
+      title: "Ticket Created",
+      description: "New support ticket has been created successfully.",
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -196,10 +274,114 @@ const UserSupport = () => {
             title="User Support"
             description="Manage customer support tickets and inquiries"
           >
-            <Button className="flex items-center gap-1">
-              <MessageSquare className="h-4 w-4" />
-              <span>New Ticket</span>
-            </Button>
+            <Dialog open={isNewTicketDialogOpen} onOpenChange={setIsNewTicketDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-1">
+                  <MessageSquare className="h-4 w-4" />
+                  <span>New Ticket</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[550px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Support Ticket</DialogTitle>
+                  <DialogDescription>
+                    Create a new ticket for customer support issues
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreateNewTicket}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="customerName" className="text-right">
+                        Customer Name
+                      </Label>
+                      <Input
+                        id="customerName"
+                        name="customerName"
+                        placeholder="Enter customer name"
+                        className="col-span-3"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="customerEmail" className="text-right">
+                        Email
+                      </Label>
+                      <Input
+                        id="customerEmail"
+                        name="customerEmail"
+                        type="email"
+                        placeholder="customer@example.com"
+                        className="col-span-3"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="subject" className="text-right">
+                        Subject
+                      </Label>
+                      <Input
+                        id="subject"
+                        name="subject"
+                        placeholder="Ticket subject"
+                        className="col-span-3"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="category" className="text-right">
+                        Category
+                      </Label>
+                      <select 
+                        id="category"
+                        name="category"
+                        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 col-span-3"
+                        required
+                      >
+                        <option value="">Select category</option>
+                        <option value="Order Issue">Order Issue</option>
+                        <option value="Product Inquiry">Product Inquiry</option>
+                        <option value="Return Request">Return Request</option>
+                        <option value="Account Problem">Account Problem</option>
+                        <option value="Payment Issue">Payment Issue</option>
+                        <option value="Shipping Question">Shipping Question</option>
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="priority" className="text-right">
+                        Priority
+                      </Label>
+                      <select 
+                        id="priority"
+                        name="priority"
+                        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 col-span-3"
+                        required
+                      >
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Urgent">Urgent</option>
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-4 items-start gap-4">
+                      <Label htmlFor="description" className="text-right">
+                        Description
+                      </Label>
+                      <Textarea
+                        id="description"
+                        name="description"
+                        placeholder="Detailed description of the issue"
+                        className="col-span-3"
+                        rows={4}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Create Ticket</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </PageHeader>
         </div>
         
@@ -329,10 +511,10 @@ const UserSupport = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem>Open</DropdownMenuItem>
-                          <DropdownMenuItem>In Progress</DropdownMenuItem>
-                          <DropdownMenuItem>Resolved</DropdownMenuItem>
-                          <DropdownMenuItem>Closed</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStatusChange("Open")}>Open</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStatusChange("In Progress")}>In Progress</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStatusChange("Resolved")}>Resolved</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>Closed</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
@@ -343,14 +525,23 @@ const UserSupport = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuItem>Sarah Johnson</DropdownMenuItem>
-                          <DropdownMenuItem>Michael Chen</DropdownMenuItem>
-                          <DropdownMenuItem>Emily Rodriguez</DropdownMenuItem>
-                          <DropdownMenuItem>Unassigned</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAssignTicket("Sarah Johnson")}>Sarah Johnson</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAssignTicket("Michael Chen")}>Michael Chen</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAssignTicket("Emily Rodriguez")}>Emily Rodriguez</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleAssignTicket(null)}>Unassigned</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
-                      <Button size="sm">
+                      <Button size="sm" onClick={() => {
+                        if (selectedTicket.customer.phone) {
+                          window.location.href = `tel:+${selectedTicket.customer.phone}`;
+                        } else {
+                          toast({
+                            title: "No Phone Number",
+                            description: "Customer phone number is not available",
+                          });
+                        }
+                      }}>
                         <Phone className="h-4 w-4 mr-1" />
                         Call
                       </Button>
