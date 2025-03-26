@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,34 +42,26 @@ const Finance = () => {
             <StatCard 
               title="Total Revenue" 
               value="$1,782,450"
-              trend={12}
-              trendLabel="from last month"
+              trend={{ value: 12, positive: true }}
               icon={DollarSign}
-              color="green"
             />
             <StatCard 
               title="Monthly Revenue" 
               value="$258,670"
-              trend={8}
-              trendLabel="from last month"
+              trend={{ value: 8, positive: true }}
               icon={TrendingUp}
-              color="blue"
             />
             <StatCard 
               title="Expenses" 
               value="$87,230"
-              trend={-5}
-              trendLabel="from last month"
+              trend={{ value: 5, positive: false }}
               icon={TrendingDown}
-              color="orange"
             />
             <StatCard 
               title="Transactions" 
               value="18,392"
-              trend={23}
-              trendLabel="from last month"
+              trend={{ value: 23, positive: true }}
               icon={CreditCard}
-              color="purple"
             />
           </div>
 
