@@ -1,14 +1,6 @@
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { 
-  Star, 
-  Mail, 
-  ShoppingCart, 
-  UsersIcon 
-} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,10 +8,49 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import QuickActions from "./QuickActions";
 
-const UserInsightsPanel = () => {
-  const navigate = useNavigate();
+interface UserSegment {
+  name: string;
+  description: string;
+  percentage: number;
+  variant?: "default" | "secondary" | "outline";
+}
 
+interface UserInsightsPanelProps {
+  segments?: UserSegment[];
+}
+
+const defaultSegments: UserSegment[] = [
+  {
+    name: "VIP Customers",
+    description: "High-value recurring customers",
+    percentage: 25,
+    variant: "default" // Using the bgGreen class directly for color
+  },
+  {
+    name: "Regular Customers",
+    description: "Consistent shoppers",
+    percentage: 42,
+    variant: "default"
+  },
+  {
+    name: "Returning Customers",
+    description: "Occasional shoppers",
+    percentage: 18,
+    variant: "secondary"
+  },
+  {
+    name: "New Customers",
+    description: "First-time shoppers",
+    percentage: 15,
+    variant: "outline"
+  }
+];
+
+const UserInsightsPanel: React.FC<UserInsightsPanelProps> = ({ 
+  segments = defaultSegments 
+}) => {
   return (
     <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
       <Card>
@@ -29,64 +60,25 @@ const UserInsightsPanel = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col">
-                <span className="font-medium">VIP Customers</span>
-                <span className="text-xs text-muted-foreground">High-value recurring customers</span>
+            {segments.map((segment) => (
+              <div key={segment.name} className="flex justify-between items-center">
+                <div className="flex flex-col">
+                  <span className="font-medium">{segment.name}</span>
+                  <span className="text-xs text-muted-foreground">{segment.description}</span>
+                </div>
+                <Badge 
+                  variant={segment.variant}
+                  className={segment.name === "VIP Customers" ? "bg-green-500 text-white" : ""}
+                >
+                  {segment.percentage}%
+                </Badge>
               </div>
-              <Badge className="bg-green-500 text-white">25%</Badge>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col">
-                <span className="font-medium">Regular Customers</span>
-                <span className="text-xs text-muted-foreground">Consistent shoppers</span>
-              </div>
-              <Badge>42%</Badge>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col">
-                <span className="font-medium">Returning Customers</span>
-                <span className="text-xs text-muted-foreground">Occasional shoppers</span>
-              </div>
-              <Badge variant="secondary">18%</Badge>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col">
-                <span className="font-medium">New Customers</span>
-                <span className="text-xs text-muted-foreground">First-time shoppers</span>
-              </div>
-              <Badge variant="outline">15%</Badge>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Common user management tasks</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Button className="flex justify-start items-center gap-2" onClick={() => navigate("/users/vip")}>
-              <Star className="h-4 w-4" />
-              <span>Manage VIP Users</span>
-            </Button>
-            <Button className="flex justify-start items-center gap-2" onClick={() => navigate("/users/support")}>
-              <Mail className="h-4 w-4" />
-              <span>User Support</span>
-            </Button>
-            <Button className="flex justify-start items-center gap-2" onClick={() => navigate("/users/feedback")}>
-              <ShoppingCart className="h-4 w-4" />
-              <span>Review Feedback</span>
-            </Button>
-            <Button className="flex justify-start items-center gap-2" onClick={() => navigate("/users/analytics")}>
-              <UsersIcon className="h-4 w-4" />
-              <span>User Analytics</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <QuickActions />
     </div>
   );
 };

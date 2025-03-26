@@ -1,6 +1,6 @@
 
 import React from "react";
-import { UsersIcon, ShoppingCart, Star, Calendar } from "lucide-react";
+import { UsersIcon, ShoppingCart, Star, Calendar, LucideIcon } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 
 export interface UserStat {
@@ -8,7 +8,7 @@ export interface UserStat {
   title: string;
   value: number | string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   trend: { value: number; positive: boolean };
   color?: string;
 }
