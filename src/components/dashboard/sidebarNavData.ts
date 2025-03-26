@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Mail,
   Shield,
+  IndianRupee,
 } from "lucide-react";
 
 export interface NavItem {
@@ -63,6 +64,19 @@ export const navItems: NavItem[] = [
     title: "Orders",
     path: "/orders",
     badge: 12,
+  },
+  {
+    icon: IndianRupee,
+    title: "Finance",
+    path: "/finance",
+    children: [
+      { title: "Overview", path: "/finance" },
+      { title: "Transactions", path: "/finance?tab=transactions" },
+      { title: "Settlements", path: "/finance?tab=settlements" },
+      { title: "Payouts", path: "/finance?tab=payouts" },
+      { title: "Refunds", path: "/finance?tab=refunds" },
+      { title: "Analytics", path: "/finance?tab=analytics" },
+    ],
   },
   {
     icon: Package,

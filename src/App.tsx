@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
-import Finance from "./pages/Finance";
+import Finance from "./pages/finance/Finance";
 import NotFound from "./pages/NotFound";
 import Administration from "./pages/administration/Administration";
 
