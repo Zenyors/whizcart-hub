@@ -14,6 +14,10 @@ import UserAnalytics from "./pages/users/UserAnalytics";
 import UserFeedback from "./pages/users/UserFeedback";
 import VipUsers from "./pages/users/VipUsers";
 import UserSupport from "./pages/users/UserSupport";
+import Vendors from "./pages/vendors/Vendors";
+import VendorDetails from "./pages/vendors/VendorDetails";
+import VendorProducts from "./pages/vendors/VendorProducts";
+import VendorPayouts from "./pages/vendors/VendorPayouts";
 
 const queryClient = new QueryClient();
 
@@ -28,12 +32,21 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/finance" element={<Finance />} />
+          
+          {/* User Routes */}
           <Route path="/users" element={<Users />} />
           <Route path="/users/:id" element={<UserDetails />} />
           <Route path="/users/analytics" element={<UserAnalytics />} />
           <Route path="/users/feedback" element={<UserFeedback />} />
           <Route path="/users/vip" element={<VipUsers />} />
           <Route path="/users/support" element={<UserSupport />} />
+          
+          {/* Vendor Routes */}
+          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/vendors/:id" element={<VendorDetails />} />
+          <Route path="/vendors/products" element={<VendorProducts />} />
+          <Route path="/vendors/payouts" element={<VendorPayouts />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
