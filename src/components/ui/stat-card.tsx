@@ -15,7 +15,13 @@ interface StatCardProps {
   };
   className?: string;
   isLoading?: boolean;
-  style?: React.CSSProperties; // Add style prop to the interface
+  style?: React.CSSProperties;
+  color?: string;
+  iconClassName?: string;
+  valueClassName?: string;
+  titleClassName?: string;
+  descriptionClassName?: string;
+  trendClassName?: string;
 }
 
 export const StatCard = ({
@@ -26,7 +32,13 @@ export const StatCard = ({
   trend,
   className,
   isLoading = false,
-  style, // Add style to the component props
+  style,
+  color,
+  iconClassName,
+  valueClassName,
+  titleClassName,
+  descriptionClassName,
+  trendClassName,
 }: StatCardProps) => {
   return (
     <Card
@@ -34,14 +46,17 @@ export const StatCard = ({
         "overflow-hidden transition-all duration-200 card-shadow",
         className
       )}
-      style={style} // Pass the style prop to the Card component
+      style={{ 
+        ...style,
+        borderTop: color ? `3px solid ${color}` : undefined,
+      }}
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className={cn("text-sm font-medium text-muted-foreground", titleClassName)}>{title}</p>
           {Icon && (
-            <div className="rounded-md bg-secondary p-2">
-              <Icon className="h-4 w-4 text-foreground opacity-70" />
+            <div className={cn("rounded-md bg-secondary p-2", iconClassName)}>
+              <Icon className={cn("h-4 w-4 text-foreground opacity-70", color ? `text-${color}` : "")} />
             </div>
           )}
         </div>
@@ -55,14 +70,15 @@ export const StatCard = ({
         ) : (
           <div className="space-y-1">
             <div className="flex items-baseline">
-              <h2 className="text-2xl font-bold tracking-tight">
+              <h2 className={cn("text-2xl font-bold tracking-tight", valueClassName)}>
                 {value}
               </h2>
               {trend && (
                 <span
                   className={cn(
                     "ml-2 text-xs font-medium",
-                    trend.positive ? "text-emerald-500" : "text-red-500"
+                    trend.positive ? "text-emerald-500" : "text-red-500",
+                    trendClassName
                   )}
                 >
                   {trend.positive ? "+" : "-"}
@@ -71,7 +87,7 @@ export const StatCard = ({
               )}
             </div>
             {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
+              <p className={cn("text-xs text-muted-foreground", descriptionClassName)}>{description}</p>
             )}
           </div>
         )}
