@@ -12,7 +12,8 @@ import {
   User, 
   Store, 
   Truck,
-  ChevronRight
+  ChevronRight,
+  ShoppingCart
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";

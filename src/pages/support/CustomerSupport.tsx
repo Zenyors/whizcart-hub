@@ -14,7 +14,8 @@ import {
   ChevronRight, 
   ArrowRight, 
   MessageCircle, 
-  IndianRupee
+  IndianRupee,
+  ShoppingCart
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
@@ -45,8 +46,10 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// Define types for ticket and FAQ
 interface SupportTicket {
   id: string;
   subject: string;
@@ -68,10 +71,29 @@ interface FAQ {
 
 const CustomerSupport = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("support-home");
   const [searchQuery, setSearchQuery] = useState<string>("");
   
-  // Mock data for tickets
+  const ticketFormSchema = z.object({
+    type: z.string(),
+    subject: z.string().min(5, "Subject must be at least 5 characters"),
+    category: z.string(),
+    priority: z.string(),
+    description: z.string().min(10, "Description must be at least 10 characters"),
+  });
+
+  const ticketForm = useForm<z.infer<typeof ticketFormSchema>>({
+    resolver: zodResolver(ticketFormSchema),
+    defaultValues: {
+      type: "Customer",
+      subject: "",
+      category: "",
+      priority: "Medium",
+      description: "",
+    },
+  });
+
   const mockTickets: SupportTicket[] = [
     {
       id: "T-1001",
@@ -106,8 +128,7 @@ const CustomerSupport = () => {
       lastUpdated: "2023-07-14T11:20:00"
     }
   ];
-  
-  // Mock FAQs data
+
   const mockFAQs: FAQ[] = [
     {
       id: "FAQ-1",
@@ -140,26 +161,25 @@ const CustomerSupport = () => {
       category: "Returns"
     }
   ];
-  
-  // Filter FAQs based on search query
+
   const filteredFAQs = searchQuery 
     ? mockFAQs.filter(faq => 
         faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
         faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : mockFAQs;
-  
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-  
+
   const handleCreateTicket = () => {
     toast({
       title: "Support Ticket Created",
       description: "Your ticket has been submitted successfully. We'll get back to you soon.",
     });
   };
-  
+
   return (
     <>
       <Helmet>
@@ -189,7 +209,6 @@ const CustomerSupport = () => {
           </PageHeader>
           
           <div className="grid grid-cols-1 gap-6">
-            {/* Main Support Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid grid-cols-4 mb-6">
                 <TabsTrigger value="support-home">Support Home</TabsTrigger>
@@ -198,9 +217,7 @@ const CustomerSupport = () => {
                 <TabsTrigger value="create-ticket">Create Ticket</TabsTrigger>
               </TabsList>
               
-              {/* Support Home Tab */}
               <TabsContent value="support-home" className="space-y-6">
-                {/* Support Options Cards */}
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
                   <Card className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
@@ -320,7 +337,6 @@ const CustomerSupport = () => {
                   </Card>
                 </div>
                 
-                {/* Contact Methods Section */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Contact Us</CardTitle>
@@ -358,7 +374,6 @@ const CustomerSupport = () => {
                   </CardContent>
                 </Card>
                 
-                {/* Popular FAQs Preview */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Frequently Asked Questions</CardTitle>
@@ -390,7 +405,6 @@ const CustomerSupport = () => {
                 </Card>
               </TabsContent>
               
-              {/* Knowledge Base Tab */}
               <TabsContent value="knowledge-base">
                 <Card>
                   <CardHeader>
@@ -463,7 +477,6 @@ const CustomerSupport = () => {
                         )}
                       </TabsContent>
                       
-                      {/* Other categories would have similar content but filtered */}
                       <TabsContent value="general" className="space-y-4">
                         <Accordion type="single" collapsible className="w-full">
                           {filteredFAQs
@@ -480,8 +493,6 @@ const CustomerSupport = () => {
                             ))}
                         </Accordion>
                       </TabsContent>
-                      
-                      {/* Similar content for other tabs */}
                     </Tabs>
                   </CardContent>
                   <CardFooter className="flex justify-between">
@@ -495,7 +506,6 @@ const CustomerSupport = () => {
                 </Card>
               </TabsContent>
               
-              {/* My Tickets Tab */}
               <TabsContent value="tickets">
                 <Card>
                   <CardHeader>
@@ -677,7 +687,6 @@ const CustomerSupport = () => {
                 </Card>
               </TabsContent>
               
-              {/* Create Ticket Tab */}
               <TabsContent value="create-ticket">
                 <Card>
                   <CardHeader>
@@ -685,66 +694,113 @@ const CustomerSupport = () => {
                     <CardDescription>Submit a new support request</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Form>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <FormLabel className="text-right">Ticket Type</FormLabel>
-                          <div className="col-span-3">
-                            <select className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-                              <option value="Customer">Customer Support</option>
-                              <option value="Vendor">Vendor Support</option>
-                              <option value="Delivery">Delivery Partner Support</option>
-                            </select>
-                          </div>
-                        </div>
+                    <Form {...ticketForm}>
+                      <form onSubmit={ticketForm.handleSubmit(handleCreateTicket)} className="space-y-4">
+                        <FormField
+                          control={ticketForm.control}
+                          name="type"
+                          render={({ field }) => (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <FormLabel className="text-right">Ticket Type</FormLabel>
+                              <div className="col-span-3">
+                                <select 
+                                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                  {...field}
+                                >
+                                  <option value="Customer">Customer Support</option>
+                                  <option value="Vendor">Vendor Support</option>
+                                  <option value="Delivery">Delivery Partner Support</option>
+                                </select>
+                              </div>
+                            </div>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={ticketForm.control}
+                          name="subject"
+                          render={({ field }) => (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <FormLabel className="text-right">Subject</FormLabel>
+                              <div className="col-span-3">
+                                <Input
+                                  placeholder="Brief description of the issue"
+                                  {...field}
+                                />
+                                <FormMessage />
+                              </div>
+                            </div>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={ticketForm.control}
+                          name="category"
+                          render={({ field }) => (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <FormLabel className="text-right">Category</FormLabel>
+                              <div className="col-span-3">
+                                <select 
+                                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                  {...field}
+                                >
+                                  <option value="">Select a category</option>
+                                  <option value="account">Account Issues</option>
+                                  <option value="order">Order Problems</option>
+                                  <option value="payment">Payment & Refunds</option>
+                                  <option value="delivery">Delivery Issues</option>
+                                  <option value="product">Product Queries</option>
+                                  <option value="technical">Technical Support</option>
+                                  <option value="other">Other</option>
+                                </select>
+                                <FormMessage />
+                              </div>
+                            </div>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={ticketForm.control}
+                          name="priority"
+                          render={({ field }) => (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <FormLabel className="text-right">Priority</FormLabel>
+                              <div className="col-span-3">
+                                <select 
+                                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                  {...field}
+                                >
+                                  <option value="Low">Low - No immediate impact</option>
+                                  <option value="Medium">Medium - Minor functionality affected</option>
+                                  <option value="High">High - Major functionality affected</option>
+                                  <option value="Urgent">Urgent - System unusable</option>
+                                </select>
+                                <FormMessage />
+                              </div>
+                            </div>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={ticketForm.control}
+                          name="description"
+                          render={({ field }) => (
+                            <div className="grid grid-cols-4 items-start gap-4">
+                              <FormLabel className="text-right">Description</FormLabel>
+                              <div className="col-span-3">
+                                <Textarea
+                                  placeholder="Detailed description of your issue"
+                                  rows={5}
+                                  {...field}
+                                />
+                                <FormMessage />
+                              </div>
+                            </div>
+                          )}
+                        />
                         
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <FormLabel className="text-right">Subject</FormLabel>
-                          <Input
-                            className="col-span-3"
-                            placeholder="Brief description of the issue"
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <FormLabel className="text-right">Category</FormLabel>
-                          <div className="col-span-3">
-                            <select className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-                              <option value="">Select a category</option>
-                              <option value="account">Account Issues</option>
-                              <option value="order">Order Problems</option>
-                              <option value="payment">Payment & Refunds</option>
-                              <option value="delivery">Delivery Issues</option>
-                              <option value="product">Product Queries</option>
-                              <option value="technical">Technical Support</option>
-                              <option value="other">Other</option>
-                            </select>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <FormLabel className="text-right">Priority</FormLabel>
-                          <div className="col-span-3">
-                            <select className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-                              <option value="Low">Low - No immediate impact</option>
-                              <option value="Medium">Medium - Minor functionality affected</option>
-                              <option value="High">High - Major functionality affected</option>
-                              <option value="Urgent">Urgent - System unusable</option>
-                            </select>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-4 items-start gap-4">
-                          <FormLabel className="text-right">Description</FormLabel>
-                          <Textarea
-                            className="col-span-3"
-                            placeholder="Detailed description of your issue"
-                            rows={5}
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <FormLabel className="text-right">Attachments</FormLabel>
+                          <Label className="text-right">Attachments</Label>
                           <div className="col-span-3">
                             <Input
                               type="file"
@@ -755,17 +811,22 @@ const CustomerSupport = () => {
                             </p>
                           </div>
                         </div>
-                      </div>
+                        
+                        <div className="flex justify-end gap-2 pt-4">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setActiveTab("support-home")}
+                          >
+                            Cancel
+                          </Button>
+                          <Button type="submit">
+                            Submit Ticket
+                          </Button>
+                        </div>
+                      </form>
                     </Form>
                   </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="outline" onClick={() => setActiveTab("support-home")}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCreateTicket}>
-                      Submit Ticket
-                    </Button>
-                  </CardFooter>
                 </Card>
               </TabsContent>
             </Tabs>
