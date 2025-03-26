@@ -1,9 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { FAQ } from "@/types/support";
+import { useToast } from "@/hooks/use-toast";
 
 interface FAQPreviewProps {
   faqs: FAQ[];
@@ -11,6 +13,23 @@ interface FAQPreviewProps {
 }
 
 const FAQPreview = ({ faqs, onSetActiveTab }: FAQPreviewProps) => {
+  const { toast } = useToast();
+  const [helpfulRatings, setHelpfulRatings] = useState<Record<string, boolean | null>>({});
+
+  const handleRateAnswer = (faqId: string, isHelpful: boolean) => {
+    setHelpfulRatings(prev => ({
+      ...prev,
+      [faqId]: isHelpful
+    }));
+
+    toast({
+      title: isHelpful ? "Thanks for your feedback!" : "We'll improve our answer",
+      description: isHelpful 
+        ? "We're glad this was helpful." 
+        : "We'll use your feedback to improve our support content.",
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +44,32 @@ const FAQPreview = ({ faqs, onSetActiveTab }: FAQPreviewProps) => {
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent>
-                {faq.answer}
+                <div className="mb-4">
+                  {faq.answer}
+                </div>
+                <div className="flex items-center justify-between border-t pt-3 text-sm">
+                  <span className="text-muted-foreground">Was this answer helpful?</span>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant={helpfulRatings[faq.id] === true ? "default" : "outline"} 
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => handleRateAnswer(faq.id, true)}
+                    >
+                      <ThumbsUp className="h-4 w-4" />
+                      Yes
+                    </Button>
+                    <Button 
+                      variant={helpfulRatings[faq.id] === false ? "default" : "outline"} 
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => handleRateAnswer(faq.id, false)}
+                    >
+                      <ThumbsDown className="h-4 w-4" />
+                      No
+                    </Button>
+                  </div>
+                </div>
               </AccordionContent>
             </AccordionItem>
           ))}

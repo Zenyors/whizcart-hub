@@ -1,14 +1,14 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Search, HelpCircle } from "lucide-react";
+import { Search, HelpCircle, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FAQ } from "@/types/support";
+import { useToast } from "@/hooks/use-toast";
 
 interface KnowledgeBaseProps {
   faqs: FAQ[];
@@ -17,7 +17,9 @@ interface KnowledgeBaseProps {
 
 const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [helpfulRatings, setHelpfulRatings] = useState<Record<string, boolean | null>>({});
+  const { toast } = useToast();
   
   const filteredFAQs = searchQuery 
     ? faqs.filter(faq => 
@@ -26,8 +28,32 @@ const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
       )
     : faqs;
 
+  const categoryFilteredFAQs = activeCategory === "all" 
+    ? filteredFAQs 
+    : filteredFAQs.filter(faq => 
+        faq.category.toLowerCase() === activeCategory.toLowerCase()
+      );
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+  };
+
+  const handleRateAnswer = (faqId: string, isHelpful: boolean) => {
+    setHelpfulRatings(prev => ({
+      ...prev,
+      [faqId]: isHelpful
+    }));
+
+    toast({
+      title: isHelpful ? "Thanks for your feedback!" : "We'll improve our answer",
+      description: isHelpful 
+        ? "We're glad this was helpful." 
+        : "We'll use your feedback to improve our support content.",
+    });
   };
 
   return (
@@ -49,7 +75,7 @@ const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="all" className="w-full">
+        <Tabs value={activeCategory} onValueChange={handleCategoryChange} className="w-full">
           <TabsList className="grid grid-cols-7 mb-4">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="general">General</TabsTrigger>
@@ -60,9 +86,9 @@ const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
             <TabsTrigger value="returns">Returns</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="all" className="space-y-4">
+          <TabsContent value={activeCategory} className="space-y-4">
             <Accordion type="single" collapsible className="w-full">
-              {filteredFAQs.map((faq) => (
+              {categoryFilteredFAQs.map((faq) => (
                 <AccordionItem key={faq.id} value={faq.id}>
                   <AccordionTrigger className="text-left">
                     {faq.question}
@@ -79,8 +105,24 @@ const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
                         Was this helpful?
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">Yes</Button>
-                        <Button variant="outline" size="sm">No</Button>
+                        <Button 
+                          variant={helpfulRatings[faq.id] === true ? "default" : "outline"} 
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => handleRateAnswer(faq.id, true)}
+                        >
+                          <ThumbsUp className="h-4 w-4" />
+                          Yes
+                        </Button>
+                        <Button 
+                          variant={helpfulRatings[faq.id] === false ? "default" : "outline"} 
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => handleRateAnswer(faq.id, false)}
+                        >
+                          <ThumbsDown className="h-4 w-4" />
+                          No
+                        </Button>
                       </div>
                     </div>
                   </AccordionContent>
@@ -88,7 +130,7 @@ const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
               ))}
             </Accordion>
             
-            {filteredFAQs.length === 0 && (
+            {categoryFilteredFAQs.length === 0 && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <HelpCircle className="h-12 w-12 text-muted-foreground/40 mb-4" />
                 <h3 className="font-medium text-lg mb-1">No results found</h3>
@@ -100,23 +142,6 @@ const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
                 </Button>
               </div>
             )}
-          </TabsContent>
-          
-          <TabsContent value="general" className="space-y-4">
-            <Accordion type="single" collapsible className="w-full">
-              {filteredFAQs
-                .filter(faq => faq.category === "General")
-                .map((faq) => (
-                  <AccordionItem key={faq.id} value={faq.id}>
-                    <AccordionTrigger className="text-left">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-            </Accordion>
           </TabsContent>
         </Tabs>
       </CardContent>
