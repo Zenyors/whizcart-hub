@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Search, Menu, X } from "lucide-react";
+import { Bell, Search, Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Toggle } from "@/components/ui/toggle";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -23,10 +24,17 @@ interface HeaderProps {
 const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
   const navigate = useNavigate();
   const [searchFocused, setSearchFocused] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleLogout = () => {
     // In a real app, clear authentication state here
     navigate("/login");
+  };
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    // In a real app, this would also apply the theme to the document
+    document.documentElement.classList.toggle('dark');
   };
 
   return (
@@ -54,6 +62,15 @@ const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-4">
+        <Toggle 
+          pressed={isDarkMode}
+          onPressedChange={toggleTheme}
+          aria-label="Toggle theme"
+          className="rounded-full"
+        >
+          {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+        </Toggle>
+        
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
