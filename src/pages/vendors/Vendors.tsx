@@ -1,15 +1,19 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from 'react-helmet';
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { MapPin, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 import VendorStatsSection from "@/components/vendors/VendorStatsSection";
 import VendorPerformanceChart from "@/components/vendors/VendorPerformanceChart";
 import VendorsTable from "@/components/vendors/VendorsTable";
 import VendorQuickActions from "@/components/vendors/VendorQuickActions";
+import VendorsMapDialog from "@/components/vendors/VendorsMapDialog";
 import { fetchVendors } from "@/api/vendorApi";
 
 const Vendors = () => {
@@ -17,6 +21,8 @@ const Vendors = () => {
     queryKey: ['vendors'],
     queryFn: fetchVendors,
   });
+  
+  const [mapDialogOpen, setMapDialogOpen] = useState(false);
 
   return (
     <>
@@ -28,7 +34,18 @@ const Vendors = () => {
           <PageHeader
             title="Vendor Management"
             description="Monitor, evaluate, and manage your supplier relationships"
-          />
+          >
+            <Button variant="outline" className="gap-2" onClick={() => setMapDialogOpen(true)}>
+              <MapPin className="h-4 w-4" />
+              View Map
+            </Button>
+            <Button className="gap-2" asChild>
+              <Link to="/vendors/add">
+                <Plus className="h-4 w-4" />
+                Add Vendor
+              </Link>
+            </Button>
+          </PageHeader>
 
           <VendorStatsSection totalVendors={vendors.length} isLoading={isLoading} />
 
@@ -82,6 +99,13 @@ const Vendors = () => {
               </Card>
             </div>
           </div>
+          
+          {/* Map Dialog */}
+          <VendorsMapDialog
+            open={mapDialogOpen}
+            onOpenChange={setMapDialogOpen}
+            vendors={vendors}
+          />
         </div>
       </DashboardLayout>
     </>

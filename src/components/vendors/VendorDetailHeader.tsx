@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VendorDetail } from "@/api/vendorApi";
-import { Mail, Edit } from "lucide-react";
+import { Mail, Edit, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import VendorsMapDialog from "./VendorsMapDialog";
 
 interface VendorDetailHeaderProps {
   vendor: VendorDetail;
@@ -12,6 +13,7 @@ interface VendorDetailHeaderProps {
 
 const VendorDetailHeader = ({ vendor }: VendorDetailHeaderProps) => {
   const { toast } = useToast();
+  const [mapDialogOpen, setMapDialogOpen] = useState(false);
 
   const handleContact = () => {
     toast({
@@ -47,6 +49,10 @@ const VendorDetailHeader = ({ vendor }: VendorDetailHeaderProps) => {
         </div>
       </div>
       <div className="flex gap-2">
+        <Button variant="outline" onClick={() => setMapDialogOpen(true)}>
+          <MapPin className="mr-2 h-4 w-4" />
+          View Map
+        </Button>
         <Button variant="outline" onClick={handleContact}>
           <Mail className="mr-2 h-4 w-4" />
           Contact
@@ -56,6 +62,13 @@ const VendorDetailHeader = ({ vendor }: VendorDetailHeaderProps) => {
           Edit Details
         </Button>
       </div>
+      
+      {/* Map Dialog */}
+      <VendorsMapDialog 
+        open={mapDialogOpen} 
+        onOpenChange={setMapDialogOpen} 
+        vendors={[vendor]} 
+      />
     </div>
   );
 };
