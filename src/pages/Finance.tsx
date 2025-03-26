@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,278 +33,321 @@ const Finance = () => {
         
         <main className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-8 flex flex-col">
-            <h1 className="text-3xl font-bold tracking-tight">Finance Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Finance Management</h1>
             <p className="text-muted-foreground">
-              Manage your financial data, transactions, and reports.
+              Monitor your company's financial health and manage payments.
             </p>
           </div>
-          
-          {/* Financial Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <StatCard
-              title="Total Revenue"
-              value="$845,237.89"
-              description="+21% from last month"
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <StatCard 
+              title="Total Revenue" 
+              value="$1,782,450"
+              trend={12}
+              trendLabel="from last month"
               icon={DollarSign}
-              trend={{ direction: "up", value: "21%" }}
+              color="green"
             />
-            <StatCard
-              title="Outstanding Balance"
-              value="$45,637.12"
-              description="-8% from last month"
-              icon={CreditCard}
-              trend={{ direction: "down", value: "8%" }}
-            />
-            <StatCard
-              title="Vendor Payouts"
-              value="$348,522.33"
-              description="+15% from last month"
+            <StatCard 
+              title="Monthly Revenue" 
+              value="$258,670"
+              trend={8}
+              trendLabel="from last month"
               icon={TrendingUp}
-              trend={{ direction: "up", value: "15%" }}
+              color="blue"
             />
-            <StatCard
-              title="Operating Costs"
-              value="$142,857.44"
-              description="+3% from last month"
+            <StatCard 
+              title="Expenses" 
+              value="$87,230"
+              trend={-5}
+              trendLabel="from last month"
               icon={TrendingDown}
-              trend={{ direction: "up", value: "3%" }}
+              color="orange"
+            />
+            <StatCard 
+              title="Transactions" 
+              value="18,392"
+              trend={23}
+              trendLabel="from last month"
+              icon={CreditCard}
+              color="purple"
             />
           </div>
-          
-          {/* Finance Tabs */}
-          <Tabs defaultValue="transactions" className="mb-8">
-            <TabsList className="mb-4">
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
-              <TabsTrigger value="payouts">Vendor Payouts</TabsTrigger>
-              <TabsTrigger value="reports">Financial Reports</TabsTrigger>
-              <TabsTrigger value="budget">Budget Planning</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="transactions">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex justify-between">
-                    <span>Recent Transactions</span>
-                    <Button variant="outline" size="sm">Export</Button>
-                  </CardTitle>
-                  <CardDescription>Detailed view of all recent financial transactions</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 font-medium text-sm text-muted-foreground pb-2 border-b">
-                      <div>Transaction ID</div>
-                      <div>Date</div>
-                      <div className="hidden md:block">Source</div>
-                      <div className="hidden md:block">Category</div>
-                      <div className="text-right">Amount</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">TRX-78943</div>
-                      <div>05/15/2023</div>
-                      <div className="hidden md:block">Online Store</div>
-                      <div className="hidden md:block">Sales Revenue</div>
-                      <div className="text-right font-medium text-green-600">+$4,325.00</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">TRX-78944</div>
-                      <div>05/15/2023</div>
-                      <div className="hidden md:block">Vendor Payment</div>
-                      <div className="hidden md:block">Operating Expense</div>
-                      <div className="text-right font-medium text-red-600">-$1,872.50</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">TRX-78945</div>
-                      <div>05/14/2023</div>
-                      <div className="hidden md:block">Mobile App</div>
-                      <div className="hidden md:block">Sales Revenue</div>
-                      <div className="text-right font-medium text-green-600">+$2,106.75</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">TRX-78946</div>
-                      <div>05/14/2023</div>
-                      <div className="hidden md:block">Subscription Fee</div>
-                      <div className="hidden md:block">Service Revenue</div>
-                      <div className="text-right font-medium text-green-600">+$899.00</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2">
-                      <div className="font-medium">TRX-78947</div>
-                      <div>05/13/2023</div>
-                      <div className="hidden md:block">Staff Payroll</div>
-                      <div className="hidden md:block">Operating Expense</div>
-                      <div className="text-right font-medium text-red-600">-$12,450.00</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="payouts">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex justify-between">
-                    <span>Vendor Payouts</span>
-                    <Button variant="outline" size="sm">Process Payments</Button>
-                  </CardTitle>
-                  <CardDescription>Manage all vendor payment schedules and process payouts</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 font-medium text-sm text-muted-foreground pb-2 border-b">
-                      <div>Vendor</div>
-                      <div>Due Date</div>
-                      <div className="hidden md:block">Invoice Number</div>
-                      <div className="hidden md:block">Status</div>
-                      <div className="text-right">Amount</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">TechVendor Inc.</div>
-                      <div>05/20/2023</div>
-                      <div className="hidden md:block">INV-001234</div>
-                      <div className="hidden md:block"><span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Pending</span></div>
-                      <div className="text-right font-medium">$12,750.00</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">Global Supplies Co.</div>
-                      <div>05/22/2023</div>
-                      <div className="hidden md:block">INV-005634</div>
-                      <div className="hidden md:block"><span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Scheduled</span></div>
-                      <div className="text-right font-medium">$8,432.25</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">Quality Products LLC</div>
-                      <div>05/18/2023</div>
-                      <div className="hidden md:block">INV-000987</div>
-                      <div className="hidden md:block"><span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Overdue</span></div>
-                      <div className="text-right font-medium">$6,318.90</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">Fresh Foods Intl.</div>
-                      <div>05/25/2023</div>
-                      <div className="hidden md:block">INV-002345</div>
-                      <div className="hidden md:block"><span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Scheduled</span></div>
-                      <div className="text-right font-medium">$9,751.00</div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-sm py-2">
-                      <div className="font-medium">Delivery Partners Inc.</div>
-                      <div>05/19/2023</div>
-                      <div className="hidden md:block">INV-004321</div>
-                      <div className="hidden md:block"><span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">In Review</span></div>
-                      <div className="text-right font-medium">$15,287.75</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="reports">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex justify-between">
-                      <span>Revenue Analysis</span>
-                      <Button variant="outline" size="sm">View Details</Button>
-                    </CardTitle>
-                    <CardDescription>Monthly revenue breakdown by category</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex justify-center items-center">
-                    <div className="h-80 w-full flex items-center justify-center">
-                      <PieChart className="h-60 w-60 text-muted-foreground/50" />
-                    </div>
-                  </CardContent>
-                </Card>
+
+          <div className="mt-8">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="mb-4 w-full justify-start">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                <TabsTrigger value="vendor-payouts">Vendor Payouts</TabsTrigger>
+                <TabsTrigger value="reports">Financial Reports</TabsTrigger>
+                <TabsTrigger value="settings">Finance Settings</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Revenue Breakdown</CardTitle>
+                      <CardDescription>Revenue by product category</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center p-6">
+                      <div className="flex h-60 w-full items-center justify-center rounded-md border-2 border-dashed">
+                        <PieChart className="h-10 w-10 text-muted-foreground" />
+                        <span className="ml-2 text-muted-foreground">Revenue Chart</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Monthly Trends</CardTitle>
+                      <CardDescription>Revenue and expense trends</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center p-6">
+                      <div className="flex h-60 w-full items-center justify-center rounded-md border-2 border-dashed">
+                        <BarChart3 className="h-10 w-10 text-muted-foreground" />
+                        <span className="ml-2 text-muted-foreground">Trends Chart</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
                 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex justify-between">
-                      <span>Expense Breakdown</span>
-                      <Button variant="outline" size="sm">View Details</Button>
-                    </CardTitle>
-                    <CardDescription>Quarterly expense analysis by department</CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Recent Financial Activities</CardTitle>
+                        <CardDescription>A summary of recent financial activities</CardDescription>
+                      </div>
+                      <Button variant="outline">Export</Button>
+                    </div>
                   </CardHeader>
-                  <CardContent className="flex justify-center items-center">
-                    <div className="h-80 w-full flex items-center justify-center">
-                      <BarChart3 className="h-60 w-60 text-muted-foreground/50" />
+                  <CardContent>
+                    <div className="space-y-4">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                          <div className="flex items-center">
+                            <div className="mr-4 rounded-full bg-primary/10 p-2">
+                              <DollarSign className="h-4 w-4 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium">Transaction #{1000 + i}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(2023, 5, 15 - i).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">${(1000 - i * 125).toLocaleString()}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {i % 2 === 0 ? "Completed" : "Pending"}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="budget">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex justify-between">
-                    <span>Budget Planning</span>
-                    <Button variant="outline" size="sm">Adjust Budget</Button>
-                  </CardTitle>
-                  <CardDescription>Manage departmental budgets and track spending</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-sm font-medium">Marketing Department</div>
-                        <div className="text-sm text-muted-foreground">$45,000 / $60,000</div>
+              </TabsContent>
+              
+              <TabsContent value="transactions" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Transaction History</CardTitle>
+                        <CardDescription>All financial transactions</CardDescription>
                       </div>
-                      <div className="h-2 bg-muted rounded-full">
-                        <div className="h-2 rounded-full bg-primary" style={{width: "75%"}}></div>
+                      <div className="flex gap-2">
+                        <Button variant="outline">Filter</Button>
+                        <Button variant="outline">Export</Button>
                       </div>
                     </div>
-                    
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-sm font-medium">Operations</div>
-                        <div className="text-sm text-muted-foreground">$78,000 / $85,000</div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="rounded-md border">
+                      <div className="grid grid-cols-5 border-b bg-muted/50 px-4 py-2 font-medium">
+                        <div>ID</div>
+                        <div>Date</div>
+                        <div>Description</div>
+                        <div>Amount</div>
+                        <div>Status</div>
                       </div>
-                      <div className="h-2 bg-muted rounded-full">
-                        <div className="h-2 rounded-full bg-amber-500" style={{width: "92%"}}></div>
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <div key={i} className="grid grid-cols-5 border-b px-4 py-3 last:border-0">
+                          <div>#{10045 + i}</div>
+                          <div>{new Date(2023, 5, 20 - i).toLocaleDateString()}</div>
+                          <div>
+                            {[
+                              "Product purchase",
+                              "Vendor payout",
+                              "Subscription fee",
+                              "Refund processing",
+                              "Marketing expense",
+                            ][i % 5]}
+                          </div>
+                          <div className={i % 3 === 0 ? "text-red-500" : "text-green-500"}>
+                            {i % 3 === 0 ? "-" : "+"}${(500 + i * 125).toLocaleString()}
+                          </div>
+                          <div>
+                            <span
+                              className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+                                ["bg-green-100 text-green-700", "bg-yellow-100 text-yellow-700", "bg-red-100 text-red-700"][
+                                  i % 3
+                                ]
+                              }`}
+                            >
+                              {["Completed", "Pending", "Failed"][i % 3]}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="vendor-payouts" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Vendor Payouts</CardTitle>
+                        <CardDescription>Manage payments to vendors</CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline">Schedule Payouts</Button>
+                        <Button>New Payout</Button>
                       </div>
                     </div>
-                    
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-sm font-medium">Product Development</div>
-                        <div className="text-sm text-muted-foreground">$120,000 / $200,000</div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="rounded-md border">
+                      <div className="grid grid-cols-6 border-b bg-muted/50 px-4 py-2 font-medium">
+                        <div>Vendor</div>
+                        <div>Amount</div>
+                        <div>Schedule</div>
+                        <div>Last Payout</div>
+                        <div>Status</div>
+                        <div>Actions</div>
                       </div>
-                      <div className="h-2 bg-muted rounded-full">
-                        <div className="h-2 rounded-full bg-primary" style={{width: "60%"}}></div>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="grid grid-cols-6 border-b px-4 py-3 last:border-0">
+                          <div className="font-medium">Vendor {i + 1}</div>
+                          <div>${(1500 + i * 750).toLocaleString()}</div>
+                          <div>{["Weekly", "Bi-weekly", "Monthly"][i % 3]}</div>
+                          <div>{new Date(2023, 5, 15 - i * 7).toLocaleDateString()}</div>
+                          <div>
+                            <span
+                              className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+                                ["bg-green-100 text-green-700", "bg-yellow-100 text-yellow-700"][i % 2]
+                              }`}
+                            >
+                              {["Paid", "Scheduled"][i % 2]}
+                            </span>
+                          </div>
+                          <div>
+                            <Button variant="ghost" size="sm">
+                              View
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="reports" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Financial Reports</CardTitle>
+                        <CardDescription>Generate and view financial reports</CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline">Download All</Button>
+                        <Button>Generate Report</Button>
                       </div>
                     </div>
-                    
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-sm font-medium">Customer Support</div>
-                        <div className="text-sm text-muted-foreground">$32,000 / $40,000</div>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full">
-                        <div className="h-2 rounded-full bg-amber-500" style={{width: "80%"}}></div>
-                      </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        "Monthly Revenue Report",
+                        "Quarterly Financial Statement",
+                        "Annual Tax Report",
+                        "Vendor Payment Summary",
+                        "Expense Breakdown",
+                      ].map((report, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-accent"
+                        >
+                          <div className="flex items-center">
+                            <div className="mr-4 rounded-full bg-primary/10 p-2">
+                              <BarChart3 className="h-4 w-4 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium">{report}</p>
+                              <p className="text-sm text-muted-foreground">
+                                Generated on {new Date(2023, 5, 1 - i * 10).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <Button variant="outline" size="sm">
+                            Download
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                    
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-sm font-medium">Infrastructure & IT</div>
-                        <div className="text-sm text-muted-foreground">$67,000 / $90,000</div>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full">
-                        <div className="h-2 rounded-full bg-primary" style={{width: "74%"}}></div>
-                      </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="settings" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Finance Settings</CardTitle>
+                    <CardDescription>Configure financial preferences and payment methods</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {[
+                        "Payment Gateway Configuration",
+                        "Tax Settings",
+                        "Currency Preferences",
+                        "Invoice Templates",
+                        "Payment Reminders",
+                        "Accounting Integration",
+                      ].map((setting, i) => (
+                        <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0">
+                          <div>
+                            <p className="font-medium">{setting}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {[
+                                "Configure your payment gateway settings",
+                                "Set up tax rates and calculations",
+                                "Set your preferred currency and formats",
+                                "Customize invoice templates",
+                                "Configure automatic payment reminders",
+                                "Connect to accounting software",
+                              ][i]}
+                            </p>
+                          </div>
+                          <Button variant="ghost" size="sm">
+                            Configure
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
         </main>
       </div>
     </div>
