@@ -24,7 +24,7 @@ const Vendors = () => {
         <title>Vendor Management | Dashboard</title>
       </Helmet>
       <DashboardLayout>
-        <div className="flex flex-col gap-6 w-full max-w-full">
+        <div className="flex flex-col gap-6 w-full">
           <PageHeader
             title="Vendor Management"
             description="Monitor, evaluate, and manage your supplier relationships"
@@ -32,8 +32,8 @@ const Vendors = () => {
 
           <VendorStatsSection totalVendors={vendors.length} isLoading={isLoading} />
 
-          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-7">
-            <Card className="lg:col-span-5 w-full">
+          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-7">
+            <Card className="lg:col-span-2 xl:col-span-5 w-full">
               <CardHeader>
                 <CardTitle>Vendor Overview</CardTitle>
               </CardHeader>
@@ -70,7 +70,7 @@ const Vendors = () => {
               </CardContent>
             </Card>
 
-            <div className="flex flex-col gap-6 lg:col-span-2">
+            <div className="flex flex-col gap-6 lg:col-span-1 xl:col-span-2">
               <VendorQuickActions />
               <Card>
                 <CardHeader>
