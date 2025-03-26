@@ -8,16 +8,27 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Finance from "./pages/Finance";
 import NotFound from "./pages/NotFound";
+
+// User Routes
 import Users from "./pages/users/Users";
 import UserDetails from "./pages/users/UserDetails";
 import UserAnalytics from "./pages/users/UserAnalytics";
 import UserFeedback from "./pages/users/UserFeedback";
 import VipUsers from "./pages/users/VipUsers";
 import UserSupport from "./pages/users/UserSupport";
+
+// Vendor Routes
 import Vendors from "./pages/vendors/Vendors";
 import VendorDetails from "./pages/vendors/VendorDetails";
 import VendorProducts from "./pages/vendors/VendorProducts";
 import VendorPayouts from "./pages/vendors/VendorPayouts";
+
+// New Routes
+import DeliveryPartners from "./pages/delivery/DeliveryPartners";
+import Orders from "./pages/orders/Orders";
+import Inventory from "./pages/inventory/Inventory";
+import Reports from "./pages/reports/Reports";
+import Settings from "./pages/settings/Settings";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +57,13 @@ const App = () => (
           <Route path="/vendors/:id" element={<VendorDetails />} />
           <Route path="/vendors/products" element={<VendorProducts />} />
           <Route path="/vendors/payouts" element={<VendorPayouts />} />
+          
+          {/* New Routes */}
+          <Route path="/delivery-partners" element={<DeliveryPartners />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<Settings />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
