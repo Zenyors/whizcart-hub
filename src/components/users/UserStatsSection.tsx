@@ -1,6 +1,6 @@
 
 import React from "react";
-import { UsersIcon, ShoppingCart, Star, Calendar, LucideIcon } from "lucide-react";
+import { UsersIcon, ShoppingCart, Star, Calendar, type LucideIcon } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 
 export interface UserStat {
@@ -8,7 +8,7 @@ export interface UserStat {
   title: string;
   value: number | string;
   description: string;
-  icon: LucideIcon;
+  icon: LucideIcon;  // Explicitly use LucideIcon type
   trend: { value: number; positive: boolean };
   color?: string;
 }
@@ -25,7 +25,7 @@ const defaultStats = (totalUsers: number): UserStat[] => [
     title: "Total Users",
     value: totalUsers,
     description: "Active platform users",
-    icon: UsersIcon,
+    icon: UsersIcon,  // Directly use the icon component
     trend: { value: 12, positive: true },
     color: "#3b82f6" // blue
   },
