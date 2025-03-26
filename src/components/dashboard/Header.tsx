@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Toggle } from "@/components/ui/toggle";
+import { useToast } from "@/hooks/use-toast";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -23,11 +24,16 @@ interface HeaderProps {
 
 const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchFocused, setSearchFocused] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleLogout = () => {
     // In a real app, clear authentication state here
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
     navigate("/login");
   };
 
@@ -35,6 +41,11 @@ const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
     setIsDarkMode(!isDarkMode);
     // In a real app, this would also apply the theme to the document
     document.documentElement.classList.toggle('dark');
+    
+    toast({
+      title: `${isDarkMode ? "Light" : "Dark"} Mode Activated`,
+      description: `Switched to ${isDarkMode ? "light" : "dark"} mode.`,
+    });
   };
 
   return (
@@ -43,8 +54,8 @@ const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden"
           onClick={toggleSidebar}
+          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
         >
           {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </Button>
