@@ -13,6 +13,7 @@ import {
   Star,
   MessageSquare,
   Mail,
+  Shield,
 } from "lucide-react";
 
 export interface NavItem {
@@ -78,6 +79,11 @@ export const navItems: NavItem[] = [
     title: "Customer Service",
     path: "/support",
     badge: 3,
+  },
+  {
+    icon: Shield,
+    title: "Administration",
+    path: "/administration",
   },
   {
     icon: Settings,

@@ -6,9 +6,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Finance from "./pages/Finance";
 import NotFound from "./pages/NotFound";
+import Administration from "./pages/administration/Administration";
 
 // User Routes
 import Users from "./pages/users/Users";
@@ -48,8 +50,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/finance" element={<Finance />} />
+            <Route path="/administration" element={<Administration />} />
             
             {/* User Routes */}
             <Route path="/users" element={<Users />} />
