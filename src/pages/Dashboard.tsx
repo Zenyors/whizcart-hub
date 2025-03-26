@@ -30,7 +30,7 @@ const Dashboard = () => {
           toggleSidebar={toggleSidebar} 
         />
         
-        <main className="px-4 py-6 sm:px-6 lg:px-8 page-transition-container">
+        <main className="px-4 py-6 sm:px-6 lg:px-8">
           <div className="mb-8 flex flex-col">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">

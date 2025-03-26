@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Search, Menu, X, Sun, Moon } from "lucide-react";
+import { Bell, Search, Menu, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -56,8 +56,9 @@ const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
           size="icon"
           onClick={toggleSidebar}
           aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+          className="lg:hidden"
         >
-          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          <Menu size={20} />
         </Button>
         
         <div className={`hidden sm:flex items-center relative transition-all duration-200 ${searchFocused ? 'w-72' : 'w-60'}`}>
