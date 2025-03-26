@@ -1,20 +1,48 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Phone, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, PhoneCall, Mail } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
 import { getStatusColor, getPriorityColor } from "@/utils/supportUtils";
 
+interface Ticket {
+  id: string;
+  customer: {
+    name: string;
+    email: string;
+    id: string;
+    avatarUrl: string;
+    phone?: string;
+  };
+  subject: string;
+  description: string;
+  status: string;
+  priority: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  assignedTo: string | null;
+  messages: {
+    sender: string;
+    text: string;
+    timestamp: string;
+  }[];
+}
+
 interface TicketDetailsProps {
-  selectedTicket: any | null;
-  handleStatusChange: (newStatus: string) => void;
+  selectedTicket: Ticket | null;
+  handleStatusChange: (status: string) => void;
   handleAssignTicket: (agent: string | null) => void;
   handleCallCustomer: () => void;
 }
@@ -25,177 +53,189 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({
   handleAssignTicket,
   handleCallCustomer,
 }) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [replyText, setReplyText] = useState("");
+  const [newMessage, setNewMessage] = useState<string>("");
 
-  const handleSendReply = () => {
-    if (!replyText.trim() || !selectedTicket) return;
-    
-    toast({
-      title: "Reply Sent",
-      description: "Your response has been sent to the customer.",
-    });
-    
-    setReplyText("");
+  const handleSendMessage = () => {
+    // This would be implemented with actual functionality
+    // but for now, it's just clearing the input
+    setNewMessage("");
   };
 
   if (!selectedTicket) {
     return (
-      <Card className="lg:col-span-2">
-        <div className="flex h-full flex-col items-center justify-center py-16 px-4 text-center">
-          <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium">No Ticket Selected</h3>
-          <p className="text-muted-foreground mt-2 max-w-md">
-            Select a ticket from the list on the left to view its details and respond to the customer.
-          </p>
-        </div>
-      </Card>
+      <div className="lg:col-span-2">
+        <Card className="h-full flex items-center justify-center">
+          <div className="text-center p-6">
+            <h3 className="text-lg font-medium">No ticket selected</h3>
+            <p className="text-muted-foreground">Select a ticket from the list to view details</p>
+          </div>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="lg:col-span-2">
-      <CardHeader>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <CardTitle>{selectedTicket.subject}</CardTitle>
-              <Badge className={getStatusColor(selectedTicket.status)}>
-                {selectedTicket.status}
-              </Badge>
-            </div>
-            <CardDescription className="flex items-center gap-1">
-              {selectedTicket.id} • {selectedTicket.createdAt}
-            </CardDescription>
-          </div>
-          
-          <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  Set Status
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handleStatusChange("Open")}>Open</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange("In Progress")}>In Progress</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange("Resolved")}>Resolved</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>Closed</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  Assign
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handleAssignTicket("Sarah Johnson")}>Sarah Johnson</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleAssignTicket("Michael Chen")}>Michael Chen</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleAssignTicket("Emily Rodriguez")}>Emily Rodriguez</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleAssignTicket(null)}>Unassigned</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <Button size="sm" onClick={handleCallCustomer}>
-              <Phone className="h-4 w-4 mr-1" />
-              Call
+    <div className="lg:col-span-2">
+      <Card className="h-full">
+        <CardHeader className="flex flex-row items-center justify-between px-6 py-4 border-b">
+          <CardTitle className="text-xl">{selectedTicket.subject}</CardTitle>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-1"
+              onClick={handleCallCustomer}
+            >
+              <PhoneCall className="h-4 w-4" />
+              <span>Call</span>
             </Button>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-1"
+              onClick={() => window.location.href = `mailto:${selectedTicket.customer.email}`}
+            >
+              <Mail className="h-4 w-4" />
+              <span>Email</span>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-1">
+                  <span>Status: {selectedTicket.status}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleStatusChange("Open")}>
+                  Open
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("In Progress")}>
+                  In Progress
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("Resolved")}>
+                  Resolved
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange("Closed")}>
+                  Closed
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="mb-6 flex gap-4 items-start">
-          <Avatar>
-            <AvatarImage src={selectedTicket.customer.avatarUrl} alt={selectedTicket.customer.name} />
-            <AvatarFallback>{selectedTicket.customer.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1">
-            <div className="flex justify-between mb-1">
-              <div>
-                <h3 className="text-sm font-medium">{selectedTicket.customer.name}</h3>
-                <p className="text-xs text-muted-foreground">{selectedTicket.customer.email}</p>
-                {selectedTicket.customer.phone && (
-                  <p className="text-xs text-muted-foreground">{selectedTicket.customer.phone}</p>
-                )}
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => navigate(`/users/${selectedTicket.customer.id}`)}>
-                <User className="h-4 w-4 mr-1" />
-                View Profile
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div>
-                <p className="text-xs font-medium text-muted-foreground">Category</p>
-                <p className="text-sm">{selectedTicket.category}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground">Priority</p>
-                <Badge className={getPriorityColor(selectedTicket.priority)}>
-                  {selectedTicket.priority}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-muted-foreground">Assigned To</p>
-                <p className="text-sm">{selectedTicket.assignedTo || "Unassigned"}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="border rounded-md p-1">
-          <ScrollArea className="h-[300px] py-1">
-            <div className="space-y-4 p-3">
-              {selectedTicket.messages.map((message: any, index: number) => (
-                <div 
-                  key={index} 
-                  className={`flex ${message.sender === 'Customer' ? 'justify-start' : 'justify-end'}`}
-                >
-                  <div 
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.sender === 'Customer' 
-                        ? 'bg-muted' 
-                        : 'bg-primary text-primary-foreground'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="font-medium text-xs">{message.sender}</span>
-                      <span className="text-xs opacity-70">{message.timestamp}</span>
-                    </div>
-                    <p className="text-sm">{message.text}</p>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="grid grid-cols-3 h-full">
+            <div className="col-span-2 border-r">
+              <div className="px-6 py-4">
+                <div className="flex items-start gap-4 mb-4">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={selectedTicket.customer.avatarUrl} />
+                    <AvatarFallback>{selectedTicket.customer.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="font-medium">{selectedTicket.customer.name}</div>
+                    <div className="text-sm text-muted-foreground">{selectedTicket.customer.email}</div>
+                    {selectedTicket.customer.phone && (
+                      <div className="text-sm text-muted-foreground">{selectedTicket.customer.phone}</div>
+                    )}
                   </div>
                 </div>
-              ))}
+                <div className="bg-muted p-4 rounded-md mb-4">
+                  <div className="text-sm">{selectedTicket.description}</div>
+                </div>
+              </div>
+              <Separator />
+              <ScrollArea className="h-[250px] px-6 py-4">
+                {selectedTicket.messages.map((message, index) => (
+                  <div key={index} className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <div className="font-medium">{message.sender}</div>
+                      <div className="text-xs text-muted-foreground">{message.timestamp}</div>
+                    </div>
+                    <div className="bg-secondary p-3 rounded-md">
+                      <div className="text-sm">{message.text}</div>
+                    </div>
+                  </div>
+                ))}
+              </ScrollArea>
+              <div className="p-4 border-t">
+                <Textarea
+                  placeholder="Type your message here..."
+                  className="mb-2"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                />
+                <div className="flex justify-end">
+                  <Button onClick={handleSendMessage}>Send Message</Button>
+                </div>
+              </div>
             </div>
-          </ScrollArea>
-        </div>
-        
-        <div className="mt-4 space-y-2">
-          <Textarea 
-            placeholder="Type your reply here..." 
-            className="min-h-[100px]"
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-          />
-          <div className="flex justify-between">
-            <Button variant="outline">
-              Add Template
-            </Button>
-            <div className="flex gap-2">
-              <Button variant="outline">Save Draft</Button>
-              <Button onClick={handleSendReply} disabled={!replyText.trim()}>
-                Send Reply
-              </Button>
+            <div className="p-4">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium mb-1">Ticket Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">ID</span>
+                      <span className="text-sm font-medium">{selectedTicket.id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Status</span>
+                      <Badge className={getStatusColor(selectedTicket.status)}>
+                        {selectedTicket.status}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Priority</span>
+                      <Badge variant="outline" className={getPriorityColor(selectedTicket.priority)}>
+                        {selectedTicket.priority}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Category</span>
+                      <span className="text-sm">{selectedTicket.category}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Created</span>
+                      <span className="text-sm">{selectedTicket.createdAt}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Updated</span>
+                      <span className="text-sm">{selectedTicket.updatedAt}</span>
+                    </div>
+                  </div>
+                </div>
+                <Separator />
+                <div>
+                  <h4 className="text-sm font-medium mb-1">Assigned Agent</h4>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Current Agent</span>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          {selectedTicket.assignedTo || "Unassigned"}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleAssignTicket("Ravi Kumar")}>
+                          Ravi Kumar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleAssignTicket("Priya Sharma")}>
+                          Priya Sharma
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleAssignTicket("Amit Patel")}>
+                          Amit Patel
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleAssignTicket(null)}>
+                          Unassign
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

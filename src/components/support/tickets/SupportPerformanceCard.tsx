@@ -1,57 +1,45 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
+const data = [
+  { day: "Mon", tickets: 7, resolved: 5 },
+  { day: "Tue", tickets: 12, resolved: 8 },
+  { day: "Wed", tickets: 15, resolved: 11 },
+  { day: "Thu", tickets: 9, resolved: 7 },
+  { day: "Fri", tickets: 11, resolved: 9 },
+  { day: "Sat", tickets: 4, resolved: 4 },
+  { day: "Sun", tickets: 3, resolved: 2 }
+];
 
 const SupportPerformanceCard: React.FC = () => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Support Performance</CardTitle>
-        <CardDescription>Key metrics and SLA compliance</CardDescription>
+        <CardDescription>Weekly ticket volume and resolution rate</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm font-medium">First Response Time</span>
-              <span className="text-sm font-medium">3.2 hours</span>
-            </div>
-            <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
-              <div className="h-full bg-green-500 rounded-full" style={{ width: '85%' }}></div>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Target: 4 hours</span>
-              <span>85% SLA compliance</span>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm font-medium">Resolution Time</span>
-              <span className="text-sm font-medium">8.5 hours</span>
-            </div>
-            <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
-              <div className="h-full bg-amber-500 rounded-full" style={{ width: '72%' }}></div>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Target: 8 hours</span>
-              <span>72% SLA compliance</span>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm font-medium">Customer Satisfaction</span>
-              <span className="text-sm font-medium">4.6 / 5.0</span>
-            </div>
-            <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
-              <div className="h-full bg-green-500 rounded-full" style={{ width: '92%' }}></div>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Target: 4.5 / 5.0</span>
-              <span>92% positive ratings</span>
-            </div>
-          </div>
+        <div className="h-[200px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={data}
+              margin={{
+                top: 5,
+                right: 5,
+                left: -10,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Area type="monotone" dataKey="tickets" stackId="1" stroke="#8884d8" fill="#8884d8" />
+              <Area type="monotone" dataKey="resolved" stackId="2" stroke="#82ca9d" fill="#82ca9d" />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
