@@ -229,7 +229,7 @@ const Users = () => {
                         <TableCell>
                           <Badge 
                             variant={
-                              user.segment === "VIP" ? "success" :
+                              user.segment === "VIP" ? "default" :
                               user.segment === "Regular" ? "default" :
                               user.segment === "New" ? "outline" : "secondary"
                             }
