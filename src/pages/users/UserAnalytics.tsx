@@ -1,8 +1,5 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/dashboard/Header";
-import Sidebar from "@/components/dashboard/Sidebar";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +48,8 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { Helmet } from "react-helmet";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 
 // Mock data
 const monthlyActiveUsers = [
@@ -106,30 +105,16 @@ const geographicData = [
 ];
 
 const UserAnalytics = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { toast } = useToast();
-  const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState("yearly");
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-    toast({
-      title: sidebarOpen ? "Sidebar Collapsed" : "Sidebar Expanded",
-      description: sidebarOpen ? "The sidebar has been collapsed." : "The sidebar has been expanded.",
-    });
-  };
+  const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen bg-muted/5">
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-0" : ""}`}>
-        <Header 
-          isSidebarOpen={sidebarOpen} 
-          toggleSidebar={toggleSidebar} 
-        />
-        
-        <main className="container mx-auto px-4 py-6 md:px-6 lg:px-8">
+    <>
+      <Helmet>
+        <title>User Analytics | Dashboard</title>
+      </Helmet>
+      <DashboardLayout>
+        <div className="flex flex-col gap-6 w-full">
           <div className="mb-8">
             <Button 
               variant="ghost" 
@@ -855,10 +840,11 @@ const UserAnalytics = () => {
               </div>
             </TabsContent>
           </Tabs>
-        </main>
-      </div>
-    </div>
+        </div>
+      </DashboardLayout>
+    </>
   );
 };
 
 export default UserAnalytics;
+

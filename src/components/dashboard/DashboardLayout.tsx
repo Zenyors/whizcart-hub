@@ -24,11 +24,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         
         <main 
           className={cn(
-            "flex-1 p-4 md:p-6 transition-all duration-300 w-full overflow-x-hidden",
+            "flex-1 p-4 md:p-6 transition-all duration-300 w-full",
             isSidebarOpen ? "lg:ml-64" : ""
           )}
         >
-          <div className="container mx-auto px-0 w-full">
+          <div className="container mx-auto px-0 w-full max-w-7xl">
             {children}
           </div>
         </main>
