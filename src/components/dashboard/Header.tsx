@@ -1,17 +1,9 @@
-
 import React from "react";
-import { AlignJustify, Bell, Search } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,87 +12,75 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
-export interface HeaderProps {
-  isSidebarOpen: boolean;
-  toggleSidebar: () => void;
-}
-
-const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
+const Header = () => {
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6",
-        isSidebarOpen ? "lg:pl-64" : ""
-      )}
-    >
-      <Button
-        variant="outline"
-        size="icon"
-        className="shrink-0 md:hidden"
-        onClick={toggleSidebar}
-      >
-        <AlignJustify className="h-5 w-5" />
-        <span className="sr-only">Toggle Menu</span>
-      </Button>
-
-      <div className="w-full flex-1">
-        <form className="w-full max-w-3xl">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full appearance-none bg-background pl-9 shadow-none"
-            />
-          </div>
-        </form>
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
+      <div className="flex items-center gap-4">
+        <SidebarTrigger />
+        <div className="w-full max-w-xl">
+          <form className="w-full">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-full appearance-none bg-background pl-9 shadow-none md:w-[300px]"
+              />
+            </div>
+          </form>
+        </div>
       </div>
 
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0">
-            <Bell className="h-5 w-5" />
-            <span className="sr-only">Notifications</span>
-            <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-primary"></span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Notifications</SheetTitle>
-            <SheetDescription>
-              You have 3 unread notifications.
-            </SheetDescription>
-          </SheetHeader>
-          <div className="grid gap-4 py-4">
-            {/* Notification content would go here */}
-          </div>
-        </SheetContent>
-      </Sheet>
+      <div className="ml-auto flex items-center gap-4">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="shrink-0">
+              <Bell className="h-5 w-5" />
+              <span className="sr-only">Notifications</span>
+              <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-primary"></span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Notifications</SheetTitle>
+              <SheetDescription>
+                You have 3 unread notifications.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              {/* Notification content would go here */}
+            </div>
+          </SheetContent>
+        </Sheet>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="rounded-full">
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 };

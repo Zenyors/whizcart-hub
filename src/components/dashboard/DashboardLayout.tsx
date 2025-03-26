@@ -1,39 +1,48 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset
+} from "@/components/ui/sidebar";
+import SidebarNav from "./SidebarNav";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      
-      <div className="flex flex-col flex-1 w-full">
-        <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        
-        <main 
-          className={cn(
-            "flex-1 p-4 md:p-6 transition-all duration-300 w-full",
-            isSidebarOpen ? "lg:ml-64" : ""
-          )}
-        >
-          <div className="container mx-auto px-0 w-full max-w-7xl">
-            {children}
-          </div>
-        </main>
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full bg-background">
+        <Sidebar>
+          <SidebarHeader>
+            <div className="flex h-16 items-center px-4">
+              <h2 className="text-lg font-semibold">WhizCart Admin</h2>
+            </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarNav />
+          </SidebarContent>
+          <SidebarFooter />
+        </Sidebar>
+
+        <SidebarInset>
+          <Header />
+          <main className="flex-1 overflow-y-auto p-6">
+            <div className="mx-auto w-full max-w-7xl space-y-6">
+              {children}
+            </div>
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
