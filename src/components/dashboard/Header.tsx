@@ -1,9 +1,17 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Bell, Search, Menu, Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { AlignJustify, Bell, Search, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,110 +20,87 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Toggle } from "@/components/ui/toggle";
-import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
-interface HeaderProps {
+export interface HeaderProps {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
 }
 
 const Header = ({ isSidebarOpen, toggleSidebar }: HeaderProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const handleLogout = () => {
-    // In a real app, clear authentication state here
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
-    navigate("/login");
-  };
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    // In a real app, this would also apply the theme to the document
-    document.documentElement.classList.toggle('dark');
-    
-    toast({
-      title: `${isDarkMode ? "Light" : "Dark"} Mode Activated`,
-      description: `Switched to ${isDarkMode ? "light" : "dark"} mode.`,
-    });
-  };
-
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/95 px-4 backdrop-blur-sm transition-all sm:px-6">
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-          className="mr-2"
-        >
-          <Menu size={20} />
-        </Button>
-        
-        <div className={`relative transition-all duration-200 ${searchFocused ? 'w-72' : 'w-60'} hidden sm:flex items-center`}>
-          <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search..."
-            className="pl-8 h-9 bg-muted/40 border-none focus:ring-1 transition-all"
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-          />
-        </div>
+    <header
+      className={cn(
+        "sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6",
+        isSidebarOpen ? "lg:pl-64" : ""
+      )}
+    >
+      <Button
+        variant="outline"
+        size="icon"
+        className="shrink-0 md:hidden"
+        onClick={toggleSidebar}
+      >
+        <AlignJustify className="h-5 w-5" />
+        <span className="sr-only">Toggle Menu</span>
+      </Button>
+
+      <div className="w-full flex-1">
+        <form>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="w-full appearance-none bg-background pl-9 shadow-none md:w-2/3 lg:w-1/3"
+            />
+          </div>
+        </form>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Toggle 
-          pressed={isDarkMode}
-          onPressedChange={toggleTheme}
-          aria-label="Toggle theme"
-          className="rounded-full"
-        >
-          {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-        </Toggle>
-        
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
-            3
-          </Badge>
-        </Button>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="icon" className="shrink-0">
+            <Bell className="h-5 w-5" />
+            <span className="sr-only">Notifications</span>
+            <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-primary"></span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Notifications</SheetTitle>
+            <SheetDescription>
+              You have 3 unread notifications.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="grid gap-4 py-4">
+            {/* Notification content would go here */}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src="" alt="Admin User" />
-                <AvatarFallback className="text-xs">AU</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 animate-scale-in">
-            <DropdownMenuLabel>
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">Admin User</p>
-                <p className="text-xs text-muted-foreground">admin@whizcart.com</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 };

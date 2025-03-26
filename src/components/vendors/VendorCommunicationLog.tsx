@@ -28,10 +28,12 @@ interface Communication {
 }
 
 const VendorCommunicationLog = ({ vendorId }: VendorCommunicationLogProps) => {
-  const { data: communications = [], isLoading } = useQuery<Communication[]>({
+  const { data, isLoading } = useQuery<Communication[]>({
     queryKey: ['vendorCommunications', vendorId],
     queryFn: () => fetchVendorCommunications(vendorId),
   });
+  
+  const communications = data || [];
 
   if (isLoading) {
     return (

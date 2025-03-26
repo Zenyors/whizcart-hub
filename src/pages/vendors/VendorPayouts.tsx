@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from 'react-helmet';
@@ -30,7 +31,15 @@ const VendorPayouts = () => {
     queryFn: fetchVendorPayouts,
   });
 
-  if (isLoading || !data) {
+  const payouts = data?.payouts || [];
+  const stats = data?.stats || { 
+    totalPending: 0, 
+    totalPaid: 0, 
+    averageProcessingTime: 0, 
+    monthlyChange: 0 
+  };
+
+  if (isLoading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-96">
@@ -39,8 +48,6 @@ const VendorPayouts = () => {
       </DashboardLayout>
     );
   }
-
-  const { payouts, stats } = data;
 
   return (
     <>

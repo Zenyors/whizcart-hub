@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from 'react-helmet';
@@ -47,10 +48,12 @@ const VendorProducts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
-  const { data: products = [], isLoading } = useQuery<VendorProductWithVendor[]>({
+  const { data, isLoading } = useQuery<VendorProductWithVendor[]>({
     queryKey: ['vendorProducts'],
     queryFn: fetchAllVendorProducts,
   });
+
+  const products = data || [];
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 

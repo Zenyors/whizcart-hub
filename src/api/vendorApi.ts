@@ -2,7 +2,7 @@ import { Vendor } from "@/components/vendors/VendorsTable";
 import { VendorProduct } from "@/components/vendors/VendorProductsTable";
 
 // Define types for API responses
-interface VendorDetail extends Vendor {
+export interface VendorDetail extends Vendor {
   onboardedDate: string;
   paymentTerms: string;
   contact: {
@@ -568,3 +568,4 @@ export const fetchVendorPayouts = async (): Promise<VendorPayoutsData> => {
     }, 500);
   });
 };
+

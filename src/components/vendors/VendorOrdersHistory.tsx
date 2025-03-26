@@ -31,10 +31,12 @@ interface Order {
 }
 
 const VendorOrdersHistory = ({ vendorId }: VendorOrdersHistoryProps) => {
-  const { data: orders = [], isLoading } = useQuery<Order[]>({
+  const { data, isLoading } = useQuery<Order[]>({
     queryKey: ['vendorOrders', vendorId],
     queryFn: () => fetchVendorOrders(vendorId),
   });
+
+  const orders = data || [];
 
   return (
     <div className="rounded-md border">
