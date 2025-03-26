@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +17,7 @@ interface KnowledgeBaseProps {
 
 const KnowledgeBase = ({ faqs, onSetActiveTab }: KnowledgeBaseProps) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
   
   const filteredFAQs = searchQuery 
     ? faqs.filter(faq => 
