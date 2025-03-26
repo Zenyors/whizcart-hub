@@ -1,6 +1,80 @@
-
 import { Vendor } from "@/components/vendors/VendorsTable";
 import { VendorProduct } from "@/components/vendors/VendorProductsTable";
+
+// Define types for API responses
+interface VendorDetail extends Vendor {
+  onboardedDate: string;
+  paymentTerms: string;
+  contact: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  metrics: {
+    onTimeDelivery: number;
+    onTimeDeliveryTrend: number;
+    qualityScore: number;
+    qualityScoreTrend: number;
+    responseTime: number;
+    responseTimeTrend: number;
+    issueRate: number;
+    issueRateTrend: number;
+    historicalData: Array<{
+      month: string;
+      qualityScore: number;
+      onTimeDelivery: number;
+      issueRate: number;
+    }>;
+  };
+  products: VendorProduct[];
+}
+
+interface VendorOrder {
+  id: string;
+  orderNumber: string;
+  date: string;
+  itemsCount: number;
+  amount: number;
+  status: string;
+  deliveryStatus: string;
+  qualityScore: number;
+}
+
+interface VendorCommunication {
+  id: string;
+  type: string;
+  subject: string;
+  content: string;
+  date: string;
+  category: string;
+  user: {
+    name: string;
+    avatar: string;
+  };
+  files?: string[];
+}
+
+interface VendorProductWithVendor extends VendorProduct {
+  vendorName: string;
+}
+
+interface VendorPayoutsData {
+  payouts: Array<{
+    id: string;
+    vendorName: string;
+    invoiceNumber: string;
+    amount: number;
+    dueDate: string;
+    status: string;
+    paymentMethod: string;
+  }>;
+  stats: {
+    totalPending: number;
+    totalPaid: number;
+    averageProcessingTime: number;
+    monthlyChange: number;
+  };
+}
 
 // Mock vendor data
 const mockVendors: Vendor[] = [
@@ -288,8 +362,8 @@ const mockCommunications = [
   },
 ];
 
-// Mock vendor products
-const mockVendorProducts = [
+// Mock vendor products - add missing required fields for VendorProduct
+const mockVendorProducts: VendorProductWithVendor[] = [
   {
     id: "p1",
     sku: "AC-E-001",
@@ -297,7 +371,10 @@ const mockVendorProducts = [
     category: "Electronics",
     vendorName: "Acme Supplies",
     price: 129.99,
+    cost: 78.50,
+    stockQuantity: 45,
     stockStatus: "In Stock",
+    qualityScore: 95,
     qualityIssues: 0,
   },
   {
@@ -307,7 +384,10 @@ const mockVendorProducts = [
     category: "Electronics",
     vendorName: "Acme Supplies",
     price: 79.99,
+    cost: 42.00,
+    stockQuantity: 32,
     stockStatus: "In Stock",
+    qualityScore: 94,
     qualityIssues: 0,
   },
   {
@@ -317,7 +397,10 @@ const mockVendorProducts = [
     category: "Clothing",
     vendorName: "Global Distributors",
     price: 49.99,
+    cost: 22.50,
+    stockQuantity: 12,
     stockStatus: "Low Stock",
+    qualityScore: 91,
     qualityIssues: 0,
   },
   {
@@ -327,7 +410,10 @@ const mockVendorProducts = [
     category: "Home Goods",
     vendorName: "Global Distributors",
     price: 29.99,
+    cost: 12.25,
+    stockQuantity: 45,
     stockStatus: "In Stock",
+    qualityScore: 90,
     qualityIssues: 0,
   },
   {
@@ -337,7 +423,10 @@ const mockVendorProducts = [
     category: "Electronics",
     vendorName: "Metro Manufacturing",
     price: 149.99,
+    cost: 85.75,
+    stockQuantity: 0,
     stockStatus: "Out of Stock",
+    qualityScore: 88,
     qualityIssues: 2,
   },
   {
@@ -347,7 +436,10 @@ const mockVendorProducts = [
     category: "Clothing",
     vendorName: "Sunshine Textiles",
     price: 59.99,
+    cost: 28.50,
+    stockQuantity: 30,
     stockStatus: "In Stock",
+    qualityScore: 93,
     qualityIssues: 0,
   },
   {
@@ -357,13 +449,16 @@ const mockVendorProducts = [
     category: "Packaging",
     vendorName: "EcoPackage Solutions",
     price: 19.99,
+    cost: 9.75,
+    stockQuantity: 65,
     stockStatus: "In Stock",
+    qualityScore: 90,
     qualityIssues: 0,
   },
 ];
 
 // Mock payouts data
-const mockPayoutsData = {
+const mockPayoutsData: VendorPayoutsData = {
   payouts: [
     {
       id: "pay1",
@@ -429,34 +524,34 @@ export const fetchVendors = async (): Promise<Vendor[]> => {
   });
 };
 
-export const fetchVendorById = async (id: string) => {
+export const fetchVendorById = async (id: string): Promise<VendorDetail> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(mockVendorDetail);
+      resolve(mockVendorDetail as VendorDetail);
     }, 500);
   });
 };
 
-export const fetchVendorOrders = async (vendorId: string) => {
+export const fetchVendorOrders = async (vendorId: string): Promise<VendorOrder[]> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(mockOrders);
+      resolve(mockOrders as VendorOrder[]);
     }, 500);
   });
 };
 
-export const fetchVendorCommunications = async (vendorId: string) => {
+export const fetchVendorCommunications = async (vendorId: string): Promise<VendorCommunication[]> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(mockCommunications);
+      resolve(mockCommunications as VendorCommunication[]);
     }, 500);
   });
 };
 
-export const fetchAllVendorProducts = async (): Promise<VendorProduct[]> => {
+export const fetchAllVendorProducts = async (): Promise<VendorProductWithVendor[]> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -465,7 +560,7 @@ export const fetchAllVendorProducts = async (): Promise<VendorProduct[]> => {
   });
 };
 
-export const fetchVendorPayouts = async () => {
+export const fetchVendorPayouts = async (): Promise<VendorPayoutsData> => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {

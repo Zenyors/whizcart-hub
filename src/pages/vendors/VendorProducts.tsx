@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from 'react-helmet';
@@ -38,21 +37,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchAllVendorProducts } from "@/api/vendorApi";
+import { VendorProduct } from "@/components/vendors/VendorProductsTable";
+
+interface VendorProductWithVendor extends VendorProduct {
+  vendorName: string;
+}
 
 const VendorProducts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
-  const { data: products = [], isLoading } = useQuery({
+  const { data: products = [], isLoading } = useQuery<VendorProductWithVendor[]>({
     queryKey: ['vendorProducts'],
     queryFn: fetchAllVendorProducts,
   });
 
-  // Apply filters
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.vendorName.toLowerCase().includes(searchTerm.toLowerCase());
+                          (product.vendorName && product.vendorName.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const matchesStatus = filterStatus === "all" || 
                          (filterStatus === "inStock" && product.stockStatus === "In Stock") ||

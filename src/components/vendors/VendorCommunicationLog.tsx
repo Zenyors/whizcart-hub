@@ -12,8 +12,23 @@ interface VendorCommunicationLogProps {
   vendorId: string;
 }
 
+// Define the Communication type
+interface Communication {
+  id: string;
+  type: string;
+  subject: string;
+  content: string;
+  date: string;
+  category: string;
+  user: {
+    name: string;
+    avatar: string;
+  };
+  files?: string[];
+}
+
 const VendorCommunicationLog = ({ vendorId }: VendorCommunicationLogProps) => {
-  const { data: communications = [], isLoading } = useQuery({
+  const { data: communications = [], isLoading } = useQuery<Communication[]>({
     queryKey: ['vendorCommunications', vendorId],
     queryFn: () => fetchVendorCommunications(vendorId),
   });
@@ -26,7 +41,7 @@ const VendorCommunicationLog = ({ vendorId }: VendorCommunicationLogProps) => {
     );
   }
 
-  const iconMap = {
+  const iconMap: Record<string, React.ElementType> = {
     'email': Mail,
     'message': MessageSquare,
     'call': Phone,

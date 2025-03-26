@@ -23,10 +23,48 @@ import VendorProductsTable from "@/components/vendors/VendorProductsTable";
 import VendorQualityMetrics from "@/components/vendors/VendorQualityMetrics";
 import VendorCommunicationLog from "@/components/vendors/VendorCommunicationLog";
 import { fetchVendorById } from "@/api/vendorApi";
+import { VendorProduct } from "@/components/vendors/VendorProductsTable";
+
+// Define the detailed vendor type
+interface VendorDetail {
+  id: string;
+  name: string;
+  status: string;
+  isPreferred: boolean;
+  rating: number;
+  categories: string[];
+  productsCount: number;
+  totalSpend: number;
+  lastOrderDate: string;
+  onboardedDate: string;
+  paymentTerms: string;
+  contact: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  metrics: {
+    onTimeDelivery: number;
+    onTimeDeliveryTrend: number;
+    qualityScore: number;
+    qualityScoreTrend: number;
+    responseTime: number;
+    responseTimeTrend: number;
+    issueRate: number;
+    issueRateTrend: number;
+    historicalData: Array<{
+      month: string;
+      qualityScore: number;
+      onTimeDelivery: number;
+      issueRate: number;
+    }>;
+  };
+  products: VendorProduct[];
+}
 
 const VendorDetails = () => {
   const { id } = useParams();
-  const { data: vendor, isLoading } = useQuery({
+  const { data: vendor, isLoading } = useQuery<VendorDetail>({
     queryKey: ['vendor', id],
     queryFn: () => fetchVendorById(id as string),
   });

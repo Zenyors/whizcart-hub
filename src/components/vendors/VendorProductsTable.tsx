@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Package, AlertCircle, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +22,7 @@ export interface VendorProduct {
   stockStatus: string;
   qualityScore: number;
   qualityIssues: number;
+  vendorName?: string; // Added for VendorProducts.tsx
 }
 
 interface VendorProductsTableProps {

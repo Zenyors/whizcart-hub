@@ -18,8 +18,20 @@ interface VendorOrdersHistoryProps {
   vendorId: string;
 }
 
+// Define the Order type
+interface Order {
+  id: string;
+  orderNumber: string;
+  date: string;
+  itemsCount: number;
+  amount: number;
+  status: string;
+  deliveryStatus: string;
+  qualityScore: number;
+}
+
 const VendorOrdersHistory = ({ vendorId }: VendorOrdersHistoryProps) => {
-  const { data: orders = [], isLoading } = useQuery({
+  const { data: orders = [], isLoading } = useQuery<Order[]>({
     queryKey: ['vendorOrders', vendorId],
     queryFn: () => fetchVendorOrders(vendorId),
   });
