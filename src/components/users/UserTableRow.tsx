@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
@@ -41,6 +41,14 @@ const UserTableRow = ({ user }: UserTableRowProps) => {
     navigate(`/users/${userId}`);
   };
 
+  // Helper to convert existing dollar format to rupee format
+  const formatToRupee = (dollarString: string) => {
+    // Remove $ symbol and get the number
+    const numValue = parseFloat(dollarString.replace('$', '').replace(/,/g, ''));
+    // Convert to rupee (this is a simplified conversion, in a real app you'd use an exchange rate)
+    return `₹${(numValue * 75).toLocaleString('en-IN')}`;
+  };
+
   return (
     <TableRow>
       <TableCell className="font-medium">{user.id}</TableCell>
@@ -74,7 +82,12 @@ const UserTableRow = ({ user }: UserTableRowProps) => {
           {user.segment}
         </Badge>
       </TableCell>
-      <TableCell className="hidden md:table-cell">{user.spend}</TableCell>
+      <TableCell className="hidden md:table-cell">
+        <div className="flex items-center gap-1">
+          <IndianRupee className="h-4 w-4" />
+          {formatToRupee(user.spend).replace('₹', '')}
+        </div>
+      </TableCell>
       <TableCell className="hidden md:table-cell">{user.orders}</TableCell>
       <TableCell className="hidden md:table-cell">{user.lastPurchase}</TableCell>
       <TableCell className="text-right">

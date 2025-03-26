@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, AlertCircle, CheckCircle } from "lucide-react";
+import { ChevronRight, AlertCircle, CheckCircle, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -125,7 +125,10 @@ const VendorsTable = ({ vendors, isLoading = false }: VendorsTableProps) => {
                   {vendor.productsCount}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  ${vendor.totalSpend.toLocaleString()}
+                  <div className="flex items-center gap-1">
+                    <IndianRupee className="h-4 w-4" />
+                    {vendor.totalSpend.toLocaleString('en-IN')}
+                  </div>
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
                   {new Date(vendor.lastOrderDate).toLocaleDateString()}

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -98,7 +97,7 @@ const Finance = () => {
                     <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
                       <div className="flex items-center">
                         <div className="mr-4 rounded-full bg-primary/10 p-2">
-                          <DollarSign className="h-4 w-4 text-primary" />
+                          <IndianRupee className="h-4 w-4 text-primary" />
                         </div>
                         <div>
                           <p className="font-medium">Transaction #{1000 + i}</p>
@@ -108,7 +107,7 @@ const Finance = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">${(1000 - i * 125).toLocaleString()}</p>
+                        <p className="font-medium">₹{(1000 - i * 125).toLocaleString('en-IN')}</p>
                         <p className="text-sm text-muted-foreground">
                           {i % 2 === 0 ? "Completed" : "Pending"}
                         </p>
@@ -157,7 +156,7 @@ const Finance = () => {
                         ][i % 5]}
                       </div>
                       <div className={i % 3 === 0 ? "text-red-500" : "text-green-500"}>
-                        {i % 3 === 0 ? "-" : "+"}${(500 + i * 125).toLocaleString()}
+                        {i % 3 === 0 ? "-" : "+"}₹{(500 + i * 125).toLocaleString('en-IN')}
                       </div>
                       <div>
                         <span
@@ -204,7 +203,7 @@ const Finance = () => {
                   {Array.from({ length: 5 }).map((_, i) => (
                     <div key={i} className="grid grid-cols-6 border-b px-4 py-3 last:border-0">
                       <div className="font-medium">Vendor {i + 1}</div>
-                      <div>${(1500 + i * 750).toLocaleString()}</div>
+                      <div>₹{(1500 + i * 750).toLocaleString('en-IN')}</div>
                       <div>{["Weekly", "Bi-weekly", "Monthly"][i % 3]}</div>
                       <div>{new Date(2023, 5, 15 - i * 7).toLocaleDateString()}</div>
                       <div>

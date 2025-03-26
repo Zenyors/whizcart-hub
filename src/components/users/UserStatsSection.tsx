@@ -1,6 +1,6 @@
 
 import React from "react";
-import { UsersIcon, ShoppingCart, Star, Calendar, type LucideIcon } from "lucide-react";
+import { UsersIcon, ShoppingCart, Star, Calendar, IndianRupee, type LucideIcon } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 
 export interface UserStat {
@@ -32,9 +32,9 @@ const defaultStats = (totalUsers: number): UserStat[] => [
   {
     id: "avg-order",
     title: "Avg. Order Value",
-    value: "$248.92",
+    value: "₹18,669",
     description: "Per user average",
-    icon: ShoppingCart,
+    icon: IndianRupee,
     trend: { value: 5.2, positive: true },
     color: "#10b981" // emerald
   },

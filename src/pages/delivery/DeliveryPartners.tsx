@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Helmet } from 'react-helmet';
-import { Truck, MapPin, Clock, Users, Plus } from "lucide-react";
+import { Truck, MapPin, Clock, Users, Plus, IndianRupee } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,13 +75,16 @@ const DeliveryPartners = () => {
             
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Coverage Areas</CardTitle>
+                <CardTitle className="text-sm font-medium">Average Cost</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <div className="text-2xl font-bold">16</div>
+                  <div className="text-2xl font-bold flex items-center">
+                    <IndianRupee className="h-5 w-5 mr-1" />
+                    180
+                  </div>
                   <div className="rounded-full bg-purple-100 p-2 text-purple-600">
-                    <MapPin className="h-4 w-4" />
+                    <IndianRupee className="h-4 w-4" />
                   </div>
                 </div>
               </CardContent>

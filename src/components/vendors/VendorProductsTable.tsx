@@ -1,5 +1,6 @@
+
 import React from "react";
-import { Package, AlertCircle, Check } from "lucide-react";
+import { Package, AlertCircle, Check, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -72,8 +73,14 @@ const VendorProductsTable = ({ products }: VendorProductsTableProps) => {
                   <TableCell>
                     <Badge variant="outline">{product.category}</Badge>
                   </TableCell>
-                  <TableCell>${product.price.toFixed(2)}</TableCell>
-                  <TableCell>${product.cost.toFixed(2)}</TableCell>
+                  <TableCell className="flex items-center gap-1">
+                    <IndianRupee className="h-4 w-4" />
+                    {product.price.toLocaleString('en-IN')}
+                  </TableCell>
+                  <TableCell className="flex items-center gap-1">
+                    <IndianRupee className="h-4 w-4" />
+                    {product.cost.toLocaleString('en-IN')}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={margin > 40 ? "success" : margin > 20 ? "default" : "warning"}
