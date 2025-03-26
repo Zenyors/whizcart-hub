@@ -85,13 +85,13 @@ const VendorsMapDialog = ({
   const vendorLocations = generateMockLocations(vendors);
   
   // If no delivery partners are provided, generate mock ones
-  const allDeliveryPartners = deliveryPartners.length > 0 
+  const allDeliveryPartners: Location[] = deliveryPartners.length > 0 
     ? deliveryPartners.map(partner => ({
         id: partner.id,
         name: partner.name,
         location: partner.location,
         type: 'delivery' as const,
-        status: Math.random() > 0.3 ? 'active' : 'inactive',
+        status: Math.random() > 0.3 ? 'active' : 'inactive' as const,
         lastActive: new Date(Date.now() - Math.random() * 1000000).toISOString(),
         coverage: Math.floor(Math.random() * 20 + 5) + " km",
       }))

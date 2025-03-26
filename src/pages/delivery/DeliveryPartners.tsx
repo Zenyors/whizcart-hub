@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Helmet } from 'react-helmet';
 import { Truck, MapPin, Clock, Users, Plus, IndianRupee } from "lucide-react";
@@ -7,7 +6,6 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import VendorsMapDialog from "@/components/vendors/VendorsMapDialog";
 
 // Mock delivery partners for the map view
@@ -18,7 +16,6 @@ const mockDeliveryPartners = Array.from({ length: 12 }).map((_, index) => ({
     lat: 40 + Math.random() * 10,
     lng: -100 + Math.random() * 50,
   },
-  status: Math.random() > 0.3 ? 'active' as const : 'inactive' as const,
 }));
 
 const DeliveryPartners = () => {
