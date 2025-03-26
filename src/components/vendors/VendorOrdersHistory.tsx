@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart, FileText, TrendingUp, TrendingDown } from "lucide-react";
+import { ShoppingCart, FileText, TrendingUp, TrendingDown, IndianRupee } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -75,7 +75,10 @@ const VendorOrdersHistory = ({ vendorId }: VendorOrdersHistoryProps) => {
                 <TableCell className="font-medium">#{order.orderNumber}</TableCell>
                 <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                 <TableCell>{order.itemsCount} items</TableCell>
-                <TableCell>${order.amount.toLocaleString()}</TableCell>
+                <TableCell className="flex items-center gap-1">
+                  <IndianRupee className="h-4 w-4" />
+                  {order.amount.toLocaleString('en-IN')}
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant={

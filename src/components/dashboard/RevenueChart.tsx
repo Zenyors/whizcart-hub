@@ -49,7 +49,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="glass-panel p-2 text-xs">
         <p className="font-medium">{label}</p>
-        <p className="text-primary">₹{(payload[0].value).toLocaleString()}</p>
+        <p className="text-primary">₹{(payload[0].value).toLocaleString('en-IN')}</p>
       </div>
     );
 };

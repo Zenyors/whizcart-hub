@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Wallet, BanknoteIcon, RefreshCw, ArrowUp, ArrowDown } from "lucide-react";
+import { Wallet, BanknoteIcon, RefreshCw, ArrowUp, ArrowDown, IndianRupee } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface PayoutStatsProps {
@@ -21,7 +21,10 @@ const PayoutStatsGrid = ({ stats }: PayoutStatsProps) => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">${stats.totalPaid.toLocaleString()}</div>
+            <div className="text-2xl font-bold flex items-center">
+              <IndianRupee className="h-5 w-5 mr-1" />
+              {stats.totalPaid.toLocaleString('en-IN')}
+            </div>
             <div className="rounded-full bg-green-100 p-2 text-green-600">
               <Wallet className="h-4 w-4" />
             </div>
@@ -35,7 +38,10 @@ const PayoutStatsGrid = ({ stats }: PayoutStatsProps) => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">${stats.totalPending.toLocaleString()}</div>
+            <div className="text-2xl font-bold flex items-center">
+              <IndianRupee className="h-5 w-5 mr-1" />
+              {stats.totalPending.toLocaleString('en-IN')}
+            </div>
             <div className="rounded-full bg-yellow-100 p-2 text-yellow-600">
               <BanknoteIcon className="h-4 w-4" />
             </div>

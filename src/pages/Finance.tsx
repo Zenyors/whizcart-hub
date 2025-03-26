@@ -1,9 +1,10 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, TrendingUp, TrendingDown, CreditCard, PieChart, BarChart3 } from "lucide-react";
+import { IndianRupee, TrendingUp, TrendingDown, CreditCard, PieChart, BarChart3 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import PageHeader from "@/components/shared/PageHeader";
 import { useToast } from "@/hooks/use-toast";
@@ -19,19 +20,19 @@ const Finance = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatCard 
             title="Total Revenue" 
-            value="$1,782,450"
+            value="₹1,782,450"
             trend={{ value: 12, positive: true }}
-            icon={DollarSign}
+            icon={IndianRupee}
           />
           <StatCard 
             title="Monthly Revenue" 
-            value="$258,670"
+            value="₹258,670"
             trend={{ value: 8, positive: true }}
             icon={TrendingUp}
           />
           <StatCard 
             title="Expenses" 
-            value="$87,230"
+            value="₹87,230"
             trend={{ value: 5, positive: false }}
             icon={TrendingDown}
           />

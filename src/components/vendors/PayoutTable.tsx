@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IndianRupee } from "lucide-react";
 
 interface Payout {
   id: string;
@@ -103,7 +104,10 @@ const PayoutTable = ({
                   <TableRow key={payout.id}>
                     <TableCell>{payout.vendorName}</TableCell>
                     <TableCell>{payout.invoiceNumber}</TableCell>
-                    <TableCell>${payout.amount.toLocaleString()}</TableCell>
+                    <TableCell className="flex items-center gap-1">
+                      <IndianRupee className="h-4 w-4" />
+                      {payout.amount.toLocaleString('en-IN')}
+                    </TableCell>
                     <TableCell>{new Date(payout.dueDate).toLocaleDateString()}</TableCell>
                     <TableCell>{getStatusBadge(payout.status)}</TableCell>
                     <TableCell>{payout.paymentMethod}</TableCell>

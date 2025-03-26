@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AvatarGroup } from "@/components/ui/avatar-group";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronLeft, MoreHorizontal } from "lucide-react";
+import { ChevronRight, ChevronLeft, MoreHorizontal, IndianRupee } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -33,7 +33,7 @@ const orders = [
   {
     id: "ORD-12345",
     customer: "Rahul Sharma",
-    amount: "₹4,299",
+    amount: "4,299",
     products: 3,
     status: "delivered",
     date: "11 Sep 2023",
@@ -46,7 +46,7 @@ const orders = [
   {
     id: "ORD-12346",
     customer: "Priya Patel",
-    amount: "₹2,199",
+    amount: "2,199",
     products: 2,
     status: "processing",
     date: "12 Sep 2023",
@@ -58,7 +58,7 @@ const orders = [
   {
     id: "ORD-12347",
     customer: "Amit Kumar",
-    amount: "₹8,990",
+    amount: "8,990",
     products: 4,
     status: "shipped",
     date: "13 Sep 2023",
@@ -72,7 +72,7 @@ const orders = [
   {
     id: "ORD-12348",
     customer: "Sanjay Gupta",
-    amount: "₹1,499",
+    amount: "1,499",
     products: 1,
     status: "cancelled",
     date: "10 Sep 2023",
@@ -83,7 +83,7 @@ const orders = [
   {
     id: "ORD-12349",
     customer: "Neha Singh",
-    amount: "₹5,799",
+    amount: "5,799",
     products: 3,
     status: "delivered",
     date: "9 Sep 2023",
@@ -147,7 +147,10 @@ const OrdersTable = () => {
               <TableRow key={order.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
                 <TableCell className="font-medium">{order.id}</TableCell>
                 <TableCell>{order.customer}</TableCell>
-                <TableCell>{order.amount}</TableCell>
+                <TableCell className="flex items-center gap-1">
+                  <IndianRupee className="h-4 w-4" />
+                  {order.amount}
+                </TableCell>
                 <TableCell className="hidden md:table-cell">
                   <AvatarGroup
                     avatars={order.items}
