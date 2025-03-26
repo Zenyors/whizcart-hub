@@ -1,13 +1,11 @@
 
 import React, { useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import SidebarNavItem from "./SidebarNavItem";
+import SidebarNav from "./SidebarNav";
 import SidebarHeader from "./SidebarHeader";
 import SidebarFooter from "./SidebarFooter";
-import { navItems } from "./sidebarNavData";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -15,7 +13,6 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
-  const { pathname } = useLocation();
   const sidebarRef = useRef<HTMLDivElement>(null);
   
   // Handle clicks outside the sidebar to close it (on mobile)
@@ -46,19 +43,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
       <SidebarHeader />
       
       <ScrollArea className="flex-1 px-3 py-4">
-        <nav className="flex flex-col space-y-1">
-          {navItems.map((item, index) => (
-            <SidebarNavItem
-              key={index}
-              icon={item.icon}
-              title={item.title}
-              path={item.path}
-              badge={item.badge}
-              isActive={pathname === item.path}
-              children={item.children}
-            />
-          ))}
-        </nav>
+        <SidebarNav />
       </ScrollArea>
       
       <SidebarFooter />
