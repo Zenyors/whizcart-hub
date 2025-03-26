@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Search, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,30 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { getStatusColor, getPriorityColor } from "@/utils/supportUtils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface Ticket {
-  id: string;
-  customer: {
-    name: string;
-    email: string;
-    id: string;
-    avatarUrl: string;
-    phone?: string;
-  };
-  subject: string;
-  description: string;
-  status: string;
-  priority: string;
-  category: string;
-  createdAt: string;
-  updatedAt: string;
-  assignedTo: string | null;
-  messages: {
-    sender: string;
-    text: string;
-    timestamp: string;
-  }[];
-}
+import { Ticket } from "@/components/support/tickets/mockData";
 
 interface TicketListSidebarProps {
   tickets: Ticket[];

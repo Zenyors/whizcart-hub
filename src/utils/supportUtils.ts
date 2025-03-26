@@ -1,29 +1,35 @@
 
+/**
+ * Returns a CSS class string for styling status badges
+ */
 export const getStatusColor = (status: string): string => {
   switch (status) {
     case "Open":
-      return "bg-blue-500 text-white";
+      return "bg-yellow-500 hover:bg-yellow-600";
     case "In Progress":
-      return "bg-amber-500 text-white";
+      return "bg-blue-500 hover:bg-blue-600";
     case "Resolved":
-      return "bg-green-500 text-white";
+      return "bg-green-500 hover:bg-green-600";
     case "Closed":
-      return "bg-gray-500 text-white";
+      return "bg-gray-500 hover:bg-gray-600";
     default:
-      return "";
+      return "bg-gray-500 hover:bg-gray-600";
   }
 };
 
+/**
+ * Returns a CSS class string for styling priority badges
+ */
 export const getPriorityColor = (priority: string): string => {
   switch (priority) {
-    case "Urgent":
-      return "bg-red-500 text-white";
-    case "High":
-      return "bg-orange-500 text-white";
-    case "Medium":
-      return "bg-amber-500 text-white";
     case "Low":
-      return "bg-blue-500 text-white";
+      return "border-blue-500 text-blue-500";
+    case "Medium":
+      return "border-yellow-500 text-yellow-500";
+    case "High":
+      return "border-orange-500 text-orange-500";
+    case "Urgent":
+      return "border-red-500 text-red-500";
     default:
       return "";
   }

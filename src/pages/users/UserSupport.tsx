@@ -14,14 +14,14 @@ import NewTicketDialog from "@/components/support/tickets/NewTicketDialog";
 import SupportStats from "@/components/support/tickets/SupportStats";
 import SupportPerformanceCard from "@/components/support/tickets/SupportPerformanceCard";
 import CommonIssuesCard from "@/components/support/tickets/CommonIssuesCard";
-import { generateMockTickets, calculateTicketStats } from "@/components/support/tickets/mockData";
+import { generateMockTickets, calculateTicketStats, Ticket } from "@/components/support/tickets/mockData";
 
 const UserSupport = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("all");
-  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [isNewTicketDialogOpen, setIsNewTicketDialogOpen] = useState(false);
   const [updatedTickets, setUpdatedTickets] = useState(generateMockTickets());
 
@@ -86,7 +86,7 @@ const UserSupport = () => {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
     
-    const newTicket = {
+    const newTicket: Ticket = {
       id: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
       customer: {
         name: formData.get('customerName') as string,
@@ -97,8 +97,8 @@ const UserSupport = () => {
       },
       subject: formData.get('subject') as string,
       description: formData.get('description') as string,
-      status: "Open",
-      priority: formData.get('priority') as string,
+      status: "Open", // Using the literal string type
+      priority: formData.get('priority') as "Low" | "Medium" | "High" | "Urgent",
       category: formData.get('category') as string,
       createdAt: new Date().toLocaleDateString(),
       updatedAt: new Date().toLocaleDateString(),
