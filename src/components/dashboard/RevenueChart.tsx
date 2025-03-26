@@ -61,7 +61,7 @@ const RevenueChart = () => {
   const chartData = timeframe === "weekly" ? weeklyData : monthlyData;
 
   return (
-    <Card className="animate-fade-in">
+    <Card className="animate-fade-in col-span-full lg:col-span-5">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div>
           <CardTitle>Revenue Overview</CardTitle>

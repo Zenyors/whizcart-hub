@@ -10,7 +10,7 @@ interface SidebarHeaderProps {
 
 const SidebarHeader = ({ toggleSidebar }: SidebarHeaderProps) => {
   return (
-    <div className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-6">
+    <div className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-4">
       <Link to="/dashboard" className="flex items-center gap-2">
         <div className="rounded-md bg-primary p-1">
           <svg
@@ -36,8 +36,8 @@ const SidebarHeader = ({ toggleSidebar }: SidebarHeaderProps) => {
         variant="ghost" 
         size="icon" 
         onClick={toggleSidebar} 
-        className="ml-auto block lg:hidden"
-        aria-label="Close sidebar"
+        className="ml-auto lg:hidden"
+        aria-label="Toggle sidebar"
       >
         <Menu size={18} />
       </Button>

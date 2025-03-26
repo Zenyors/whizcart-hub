@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -115,7 +114,7 @@ const getTypeIcon = (type: string) => {
 
 const RecentActivity = () => {
   return (
-    <Card className="animate-fade-in">
+    <Card className="animate-fade-in col-span-full lg:col-span-2">
       <CardHeader className="pb-2">
         <CardTitle>Recent Activity</CardTitle>
         <CardDescription>Latest events from your platform</CardDescription>

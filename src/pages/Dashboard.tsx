@@ -24,13 +24,13 @@ const Dashboard = () => {
     <div className="flex min-h-screen bg-muted/5">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : ""}`}>
+      <div className="flex-1 transition-all duration-300">
         <Header 
           isSidebarOpen={sidebarOpen} 
           toggleSidebar={toggleSidebar} 
         />
         
-        <main className="container mx-auto px-4 py-6 lg:px-8">
+        <main className="px-4 py-6 md:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="mb-8 flex flex-col">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
