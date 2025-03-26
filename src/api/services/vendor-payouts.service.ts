@@ -1,6 +1,6 @@
 
 import { VendorPayoutsData } from "../types/vendor.types";
-import { mockPayoutsData } from "../mock-data/vendors.data";
+import { mockPayoutsData } from "../mock-data";
 
 // API functions for vendor payouts
 export const fetchVendorPayouts = async (): Promise<VendorPayoutsData> => {

@@ -1,6 +1,6 @@
 
 import { VendorProductWithVendor } from "../types/vendor.types";
-import { mockVendorProducts } from "../mock-data/vendors.data";
+import { mockVendorProducts } from "../mock-data";
 
 // API functions for vendor products
 export const fetchAllVendorProducts = async (): Promise<VendorProductWithVendor[]> => {

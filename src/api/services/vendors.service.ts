@@ -1,6 +1,6 @@
 
 import { Vendor, VendorDetail } from "../types/vendor.types";
-import { mockVendors, mockVendorDetail } from "../mock-data/vendors.data";
+import { mockVendors, mockVendorDetail } from "../mock-data";
 
 // API functions for general vendor operations
 export const fetchVendors = async (): Promise<Vendor[]> => {

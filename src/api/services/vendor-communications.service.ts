@@ -1,6 +1,6 @@
 
 import { VendorCommunication } from "../types/vendor.types";
-import { mockCommunications } from "../mock-data/vendors.data";
+import { mockCommunications } from "../mock-data";
 
 // API functions for vendor communications
 export const fetchVendorCommunications = async (vendorId: string): Promise<VendorCommunication[]> => {
