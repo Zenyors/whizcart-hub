@@ -9,6 +9,10 @@ import {
   Settings,
   Store,
   HelpCircle,
+  User,
+  Star,
+  MessageSquare,
+  Mail,
 } from "lucide-react";
 
 export interface NavItem {
@@ -32,7 +36,9 @@ export const navItems: NavItem[] = [
     badge: 8,
     children: [
       { title: "All Users", path: "/users" },
+      { title: "User Analytics", path: "/users/analytics" },
       { title: "VIP Users", path: "/users/vip" },
+      { title: "User Feedback", path: "/users/feedback" },
       { title: "User Support", path: "/users/support" },
     ],
   },
