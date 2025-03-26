@@ -1,10 +1,25 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const SidebarHeader = () => {
+  const { state, toggleSidebar } = useSidebar();
+  const isOpen = state === "expanded";
+
   return (
     <div className="sticky top-0 z-10 flex h-16 items-center border-b bg-background px-6">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        onClick={toggleSidebar} 
+        className="mr-2"
+        aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+      >
+        {isOpen ? <X size={18} /> : <Menu size={18} />}
+      </Button>
       <Link to="/dashboard" className="flex items-center gap-2">
         <div className="rounded-md bg-primary p-1">
           <svg

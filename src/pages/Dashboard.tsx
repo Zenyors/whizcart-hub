@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-muted/5">
-      <Sidebar isOpen={sidebarOpen} />
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : ""}`}>
         <Header 
