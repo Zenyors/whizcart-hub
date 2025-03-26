@@ -23,7 +23,7 @@ const Orders = () => {
         <title>Orders | Dashboard</title>
       </Helmet>
       <DashboardLayout>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 w-full">
           <PageHeader
             title="Orders"
             description="Manage customer orders and fulfillment"
@@ -38,7 +38,7 @@ const Orders = () => {
             </Button>
           </PageHeader>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
@@ -96,11 +96,11 @@ const Orders = () => {
             </Card>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="relative flex-1 w-full">
               <Input
                 placeholder="Search orders by ID, customer, or product..."
-                className="pl-9"
+                className="pl-9 w-full"
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +119,7 @@ const Orders = () => {
               </svg>
             </div>
             <Select defaultValue="all">
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -133,8 +133,8 @@ const Orders = () => {
             </Select>
           </div>
 
-          <Tabs defaultValue="all">
-            <TabsList>
+          <Tabs defaultValue="all" className="w-full">
+            <TabsList className="w-full sm:w-auto">
               <TabsTrigger value="all">All Orders</TabsTrigger>
               <TabsTrigger value="new">New</TabsTrigger>
               <TabsTrigger value="processing">Processing</TabsTrigger>
@@ -151,7 +151,7 @@ const Orders = () => {
                       This page is under construction. Here you'll be able to manage all customer orders, 
                       track fulfillment status, and handle customer communications.
                     </p>
-                    <div className="flex gap-4 justify-center">
+                    <div className="flex flex-wrap gap-4 justify-center">
                       <Button variant="outline">View Documentation</Button>
                       <Button>Get Started</Button>
                     </div>

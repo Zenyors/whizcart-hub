@@ -15,7 +15,7 @@ const DeliveryPartners = () => {
         <title>Delivery Partners | Dashboard</title>
       </Helmet>
       <DashboardLayout>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 w-full">
           <PageHeader
             title="Delivery Partners"
             description="Manage your delivery network and logistics partners"
@@ -30,7 +30,7 @@ const DeliveryPartners = () => {
             </Button>
           </PageHeader>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Active Partners</CardTitle>
@@ -96,7 +96,7 @@ const DeliveryPartners = () => {
                 <p className="text-muted-foreground max-w-md mx-auto mb-6">
                   This page is under construction. Here you'll be able to manage your delivery partners, track deliveries, and optimize routes.
                 </p>
-                <div className="flex gap-4 justify-center">
+                <div className="flex flex-wrap gap-4 justify-center">
                   <Button variant="outline">View Documentation</Button>
                   <Button>Get Started</Button>
                 </div>

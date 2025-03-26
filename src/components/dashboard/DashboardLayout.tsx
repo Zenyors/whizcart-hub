@@ -28,7 +28,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             isSidebarOpen ? "lg:ml-64" : ""
           )}
         >
-          {children}
+          <div className="container mx-auto px-0">
+            {children}
+          </div>
         </main>
       </div>
     </div>
