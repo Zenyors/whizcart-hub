@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from 'react-helmet';
@@ -64,7 +63,6 @@ const VendorPayouts = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Sort the filtered payouts
   const sortedPayouts = [...filteredPayouts].sort((a, b) => {
     if (sortBy === "date") {
       const dateA = new Date(a.dueDate);
@@ -90,7 +88,7 @@ const VendorPayouts = () => {
         <title>Vendor Payouts | Dashboard</title>
       </Helmet>
       <DashboardLayout>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 w-full max-w-full">
           <PageHeader
             title="Vendor Payouts"
             description="Manage payments to your suppliers and vendors"
@@ -105,7 +103,7 @@ const VendorPayouts = () => {
             </Button>
           </PageHeader>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
@@ -165,7 +163,7 @@ const VendorPayouts = () => {
             </Card>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 justify-between">
+          <div className="flex flex-col md:flex-row gap-4 justify-between flex-wrap">
             <div className="relative w-full md:w-96">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -175,8 +173,8 @@ const VendorPayouts = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex gap-3">
-              <div className="w-48">
+            <div className="flex gap-3 flex-wrap">
+              <div className="w-full sm:w-48">
                 <Select value={filterStatus} onValueChange={setFilterStatus}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by status" />
@@ -209,94 +207,30 @@ const VendorPayouts = () => {
             </div>
           </div>
 
-          <Card>
+          <Card className="w-full overflow-hidden">
             <CardHeader>
               <CardTitle>Payout History</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="cursor-pointer" onClick={() => { setSortBy("vendor"); toggleSortOrder(); }}>
-                      Vendor {sortBy === "vendor" && (sortOrder === "asc" ? "↑" : "↓")}
-                    </TableHead>
-                    <TableHead>Invoice Number</TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => { setSortBy("amount"); toggleSortOrder(); }}>
-                      Amount {sortBy === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
-                    </TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => { setSortBy("date"); toggleSortOrder(); }}>
-                      Due Date {sortBy === "date" && (sortOrder === "asc" ? "↑" : "↓")}
-                    </TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Payment Method</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
+            <CardContent className="p-0 overflow-auto">
+              <div className="w-full overflow-auto">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-10">
-                        <div className="flex justify-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-                        </div>
-                      </TableCell>
+                      <TableHead className="cursor-pointer" onClick={() => { setSortBy("vendor"); toggleSortOrder(); }}>
+                        Vendor {sortBy === "vendor" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                      <TableHead>Invoice Number</TableHead>
+                      <TableHead className="cursor-pointer" onClick={() => { setSortBy("amount"); toggleSortOrder(); }}>
+                        Amount {sortBy === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                      <TableHead className="cursor-pointer" onClick={() => { setSortBy("date"); toggleSortOrder(); }}>
+                        Due Date {sortBy === "date" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Payment Method</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ) : sortedPayouts.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-10">
-                        <Wallet className="mx-auto h-12 w-12 text-muted-foreground opacity-30" />
-                        <p className="mt-2 text-muted-foreground">No payouts found</p>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    sortedPayouts.map((payout) => (
-                      <TableRow key={payout.id}>
-                        <TableCell className="font-medium">{payout.vendorName}</TableCell>
-                        <TableCell>{payout.invoiceNumber}</TableCell>
-                        <TableCell>${payout.amount.toLocaleString()}</TableCell>
-                        <TableCell>{new Date(payout.dueDate).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={
-                              payout.status === "Paid" ? "success" :
-                              payout.status === "Pending" ? "warning" : "destructive"
-                            }
-                          >
-                            {payout.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{payout.paymentMethod}</TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="h-4 w-4"
-                            >
-                              <circle cx="12" cy="12" r="1" />
-                              <circle cx="19" cy="12" r="1" />
-                              <circle cx="5" cy="12" r="1" />
-                            </svg>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-      </DashboardLayout>
-    </>
-  );
-};
+                  </TableHeader>
+                  <TableBody>
+                    {
 
-export default VendorPayouts;

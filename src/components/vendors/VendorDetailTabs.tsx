@@ -14,36 +14,40 @@ interface VendorDetailTabsProps {
 
 const VendorDetailTabs = ({ vendor }: VendorDetailTabsProps) => {
   return (
-    <Tabs defaultValue="products">
-      <TabsList className="w-full justify-start">
+    <Tabs defaultValue="products" className="w-full">
+      <TabsList className="w-full md:w-auto flex-wrap mb-2">
         <TabsTrigger value="products">Products</TabsTrigger>
         <TabsTrigger value="orders">Order History</TabsTrigger>
         <TabsTrigger value="performance">Performance</TabsTrigger>
         <TabsTrigger value="communication">Communication</TabsTrigger>
       </TabsList>
-      <TabsContent value="products" className="mt-4">
+      <TabsContent value="products">
         <Card>
           <CardHeader>
             <CardTitle>Products</CardTitle>
             <CardDescription>All products supplied by this vendor</CardDescription>
           </CardHeader>
-          <CardContent>
-            <VendorProductsTable products={vendor.products} />
+          <CardContent className="overflow-auto p-0 md:p-6">
+            <div className="w-full overflow-auto">
+              <VendorProductsTable products={vendor.products} />
+            </div>
           </CardContent>
         </Card>
       </TabsContent>
-      <TabsContent value="orders" className="mt-4">
+      <TabsContent value="orders">
         <Card>
           <CardHeader>
             <CardTitle>Order History</CardTitle>
             <CardDescription>History of all orders with this vendor</CardDescription>
           </CardHeader>
-          <CardContent>
-            <VendorOrdersHistory vendorId={vendor.id} />
+          <CardContent className="overflow-auto p-0 md:p-6">
+            <div className="w-full overflow-auto">
+              <VendorOrdersHistory vendorId={vendor.id} />
+            </div>
           </CardContent>
         </Card>
       </TabsContent>
-      <TabsContent value="performance" className="mt-4">
+      <TabsContent value="performance">
         <Card>
           <CardHeader>
             <CardTitle>Performance Metrics</CardTitle>
@@ -54,7 +58,7 @@ const VendorDetailTabs = ({ vendor }: VendorDetailTabsProps) => {
           </CardContent>
         </Card>
       </TabsContent>
-      <TabsContent value="communication" className="mt-4">
+      <TabsContent value="communication">
         <Card>
           <CardHeader>
             <CardTitle>Communication Log</CardTitle>

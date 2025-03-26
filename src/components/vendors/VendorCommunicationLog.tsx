@@ -52,9 +52,9 @@ const VendorCommunicationLog = ({ vendorId }: VendorCommunicationLogProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="space-x-2">
+    <div className="space-y-4 w-full">
+      <div className="flex justify-between items-center flex-wrap gap-2">
+        <div className="space-x-2 flex flex-wrap gap-2">
           <Button variant="outline" size="sm">
             <Mail className="h-4 w-4 mr-2" />
             Email
@@ -88,18 +88,18 @@ const VendorCommunicationLog = ({ vendorId }: VendorCommunicationLogProps) => {
             return (
               <Card key={comm.id} className="overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="flex border-l-4 border-primary p-4">
-                    <div className="mr-4">
+                  <div className="flex flex-col md:flex-row border-l-4 border-primary p-4 break-words">
+                    <div className="mr-4 mb-4 md:mb-0">
                       <Avatar>
                         <AvatarImage src={comm.user.avatar} alt={comm.user.name} />
                         <AvatarFallback>{comm.user.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col md:flex-row md:justify-between gap-2">
                         <div>
                           <p className="font-medium">{comm.subject}</p>
-                          <div className="flex items-center gap-2 mt-1">
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
                             <Badge variant="outline" className="flex items-center gap-1">
                               <IconComponent className="h-3 w-3" />
                               {comm.type}
@@ -119,9 +119,9 @@ const VendorCommunicationLog = ({ vendorId }: VendorCommunicationLogProps) => {
                           {comm.category}
                         </Badge>
                       </div>
-                      <p className="mt-2 text-sm text-muted-foreground">{comm.content}</p>
+                      <p className="mt-2 text-sm text-muted-foreground break-words">{comm.content}</p>
                       {comm.files && comm.files.length > 0 && (
-                        <div className="mt-3 flex gap-2">
+                        <div className="mt-3 flex gap-2 flex-wrap">
                           {comm.files.map((file, i) => (
                             <Badge key={i} variant="outline" className="flex items-center gap-1">
                               <svg

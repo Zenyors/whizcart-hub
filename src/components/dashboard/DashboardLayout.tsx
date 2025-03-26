@@ -19,16 +19,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div className="flex min-h-screen bg-background">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 w-full">
         <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         
         <main 
           className={cn(
-            "flex-1 p-4 md:p-6 transition-all duration-300",
+            "flex-1 p-4 md:p-6 transition-all duration-300 w-full overflow-x-hidden",
             isSidebarOpen ? "lg:ml-64" : ""
           )}
         >
-          <div className="container mx-auto px-0">
+          <div className="container mx-auto px-0 w-full">
             {children}
           </div>
         </main>

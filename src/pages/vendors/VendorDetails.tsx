@@ -47,7 +47,7 @@ const VendorDetails = () => {
         <title>{vendor.name} | Vendor Details</title>
       </Helmet>
       <DashboardLayout>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 w-full max-w-full overflow-x-hidden">
           <VendorDetailHeader vendor={vendor} />
           <VendorMetricsOverview vendor={vendor} />
           <VendorProfileCard vendor={vendor} />
