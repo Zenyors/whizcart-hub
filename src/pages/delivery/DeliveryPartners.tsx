@@ -18,6 +18,7 @@ const mockDeliveryPartners = Array.from({ length: 12 }).map((_, index) => ({
     lat: 40 + Math.random() * 10,
     lng: -100 + Math.random() * 50,
   },
+  status: Math.random() > 0.3 ? 'active' as const : 'inactive' as const,
 }));
 
 const DeliveryPartners = () => {
