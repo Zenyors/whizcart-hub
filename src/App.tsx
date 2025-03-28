@@ -38,6 +38,9 @@ import CustomerSupport from "./pages/support/CustomerSupport";
 import CustomerSupportCategories from "./pages/support/CustomerSupportCategories";
 import ContactSupport from "./pages/support/ContactSupport";
 
+// Notifications
+import Notifications from "./pages/notifications/Notifications";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -79,6 +82,7 @@ const App = () => (
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/notifications" element={<Notifications />} />
             
             {/* Support Routes */}
             <Route path="/support" element={<CustomerSupport />} />

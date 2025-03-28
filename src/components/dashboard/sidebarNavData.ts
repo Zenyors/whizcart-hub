@@ -15,6 +15,7 @@ import {
   Mail,
   Shield,
   IndianRupee,
+  BellRing,
 } from "lucide-react";
 
 export interface NavItem {
@@ -98,6 +99,11 @@ export const navItems: NavItem[] = [
     icon: Shield,
     title: "Administration",
     path: "/administration",
+  },
+  {
+    icon: BellRing,
+    title: "Notifications",
+    path: "/notifications",
   },
   {
     icon: Settings,
