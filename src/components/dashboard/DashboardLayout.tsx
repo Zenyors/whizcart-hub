@@ -27,7 +27,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <h2 className="text-lg font-semibold">WhizCart Admin</h2>
             </div>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="px-2">
             <SidebarNav />
           </SidebarContent>
           <SidebarFooter />
