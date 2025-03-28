@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 import { Bell, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,14 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 const Header = () => {
   return (
@@ -45,26 +38,13 @@ const Header = () => {
       <div className="ml-auto flex items-center gap-4">
         <ThemeToggle />
         
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="shrink-0">
-              <Bell className="h-5 w-5" />
-              <span className="sr-only">Notifications</span>
-              <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-primary"></span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Notifications</SheetTitle>
-              <SheetDescription>
-                You have 3 unread notifications.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid gap-4 py-4">
-              {/* Notification content would go here */}
-            </div>
-          </SheetContent>
-        </Sheet>
+        <Link to="/notifications">
+          <Button variant="outline" size="icon" className="shrink-0 relative">
+            <Bell className="h-5 w-5" />
+            <span className="sr-only">Notifications</span>
+            <span className="absolute right-1 top-1 flex h-2 w-2 rounded-full bg-primary"></span>
+          </Button>
+        </Link>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
