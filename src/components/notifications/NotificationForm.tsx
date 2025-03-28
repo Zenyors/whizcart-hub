@@ -249,16 +249,72 @@ const NotificationForm = () => {
             )}
           </div>
           
-          <DialogTrigger asChild>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => setShowPreviewDialog(true)}
-              className="w-full"
-            >
-              Preview Notification
-            </Button>
-          </DialogTrigger>
+          {/* Wrap the button in a Dialog component instead of using DialogTrigger alone */}
+          <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
+            <DialogTrigger asChild>
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full"
+              >
+                Preview Notification
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Notification Preview</DialogTitle>
+                <DialogDescription>
+                  Preview how your notification will appear to users
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {notificationType === "push" && (
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                    <div className="flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                        <Bell className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold">Your App Name</p>
+                        <p className="font-medium">Sample Notification Title</p>
+                        <p className="text-sm text-muted-foreground">
+                          This is a preview of how your push notification will appear on user devices.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {notificationType === "email" && (
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                    <p className="font-medium pb-2">From: Your App &lt;notifications@yourapp.com&gt;</p>
+                    <p className="font-medium pb-2">Subject: Sample Email Notification</p>
+                    <div className="border-t pt-2">
+                      <p className="text-sm">
+                        Hello User,<br /><br />
+                        This is a preview of how your email notification will appear to users.<br /><br />
+                        Best regards,<br />
+                        Your App Team
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                {notificationType === "sms" && (
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                    <p className="text-sm">
+                      Your App: This is a preview of how your SMS notification will appear to users.
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <DialogFooter>
+                <Button onClick={() => setShowPreviewDialog(false)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
@@ -270,63 +326,7 @@ const NotificationForm = () => {
         </Button>
       </CardFooter>
       
-      {/* Preview Dialog */}
-      <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Notification Preview</DialogTitle>
-            <DialogDescription>
-              Preview how your notification will appear to users
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-6">
-            {notificationType === "push" && (
-              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-                    <Bell className="h-5 w-5" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="font-semibold">Your App Name</p>
-                    <p className="font-medium">Sample Notification Title</p>
-                    <p className="text-sm text-muted-foreground">
-                      This is a preview of how your push notification will appear on user devices.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {notificationType === "email" && (
-              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                <p className="font-medium pb-2">From: Your App &lt;notifications@yourapp.com&gt;</p>
-                <p className="font-medium pb-2">Subject: Sample Email Notification</p>
-                <div className="border-t pt-2">
-                  <p className="text-sm">
-                    Hello User,<br /><br />
-                    This is a preview of how your email notification will appear to users.<br /><br />
-                    Best regards,<br />
-                    Your App Team
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            {notificationType === "sms" && (
-              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                <p className="text-sm">
-                  Your App: This is a preview of how your SMS notification will appear to users.
-                </p>
-              </div>
-            )}
-          </div>
-          
-          <DialogFooter>
-            <Button onClick={() => setShowPreviewDialog(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Remove the duplicate dialog at the end of the component */}
     </Card>
   );
 };
