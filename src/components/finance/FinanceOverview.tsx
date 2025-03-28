@@ -5,13 +5,14 @@ import { IndianRupee, TrendingUp, CreditCard, ReceiptIndianRupee, Wallet } from 
 
 const FinanceOverview = () => {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-5">
       <StatCard 
         title="Total Revenue" 
         value="₹1,782,450"
         trend={{ value: 12, positive: true }}
         icon={IndianRupee}
         description="vs last period"
+        className="text-base"
       />
       <StatCard 
         title="Pending Payouts" 
@@ -19,6 +20,7 @@ const FinanceOverview = () => {
         trend={{ value: 8, positive: false }}
         icon={Wallet}
         description="vs last period"
+        className="text-base"
       />
       <StatCard 
         title="Completed Settlements" 
@@ -26,6 +28,7 @@ const FinanceOverview = () => {
         trend={{ value: 15, positive: true }}
         icon={ReceiptIndianRupee}
         description="vs last period"
+        className="text-base"
       />
       <StatCard 
         title="Refunds" 
@@ -33,6 +36,7 @@ const FinanceOverview = () => {
         trend={{ value: 5, positive: false }}
         icon={TrendingUp}
         description="vs last period"
+        className="text-base"
       />
       <StatCard 
         title="Transactions" 
@@ -40,6 +44,7 @@ const FinanceOverview = () => {
         trend={{ value: 23, positive: true }}
         icon={CreditCard}
         description="vs last period"
+        className="text-base"
       />
     </div>
   );

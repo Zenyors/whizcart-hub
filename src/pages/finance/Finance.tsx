@@ -21,7 +21,7 @@ const Finance = () => {
         <title>Finance Management | Dashboard</title>
       </Helmet>
       <DashboardLayout>
-        <div className="space-y-6">
+        <div className="space-y-8">
           <PageHeader 
             title="Finance Management" 
             description="Manage payments, settlements, and financial operations"
@@ -30,36 +30,36 @@ const Finance = () => {
           <FinanceOverview />
           
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-4 w-full justify-start">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="transactions">Transactions</TabsTrigger>
-              <TabsTrigger value="settlements">Settlements</TabsTrigger>
-              <TabsTrigger value="payouts">Payouts</TabsTrigger>
-              <TabsTrigger value="refunds">Refunds</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsList className="mb-6 w-full justify-start text-base">
+              <TabsTrigger value="overview" className="px-4 py-2">Overview</TabsTrigger>
+              <TabsTrigger value="transactions" className="px-4 py-2">Transactions</TabsTrigger>
+              <TabsTrigger value="settlements" className="px-4 py-2">Settlements</TabsTrigger>
+              <TabsTrigger value="payouts" className="px-4 py-2">Payouts</TabsTrigger>
+              <TabsTrigger value="refunds" className="px-4 py-2">Refunds</TabsTrigger>
+              <TabsTrigger value="analytics" className="px-4 py-2">Analytics</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="overview">
+            <TabsContent value="overview" className="mt-2">
               <TransactionsSection limit={5} />
             </TabsContent>
             
-            <TabsContent value="transactions">
+            <TabsContent value="transactions" className="mt-2">
               <TransactionsSection />
             </TabsContent>
             
-            <TabsContent value="settlements">
+            <TabsContent value="settlements" className="mt-2">
               <SettlementsSection />
             </TabsContent>
             
-            <TabsContent value="payouts">
+            <TabsContent value="payouts" className="mt-2">
               <PayoutsSection />
             </TabsContent>
             
-            <TabsContent value="refunds">
+            <TabsContent value="refunds" className="mt-2">
               <RefundsSection />
             </TabsContent>
             
-            <TabsContent value="analytics">
+            <TabsContent value="analytics" className="mt-2">
               <AnalyticsSection />
             </TabsContent>
           </Tabs>
