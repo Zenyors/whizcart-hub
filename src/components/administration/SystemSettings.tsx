@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,27 +31,54 @@ const systemSettingsSchema = z.object({
 type SystemSettingsValues = z.infer<typeof systemSettingsSchema>;
 
 const SystemSettings = () => {
+  // Add state to track if settings have been updated
+  const [settingsUpdated, setSettingsUpdated] = useState(false);
+  const [currentSettings, setCurrentSettings] = useState<SystemSettingsValues>({
+    siteName: "WhizCart",
+    siteUrl: "https://whizcart.com",
+    adminEmail: "admin@whizcart.com",
+    defaultCurrency: "INR",
+    orderPrefix: "WC",
+    maintenanceMode: false,
+    analyticsEnabled: true,
+  });
+  
   const form = useForm<SystemSettingsValues>({
     resolver: zodResolver(systemSettingsSchema),
-    defaultValues: {
-      siteName: "WhizCart",
-      siteUrl: "https://whizcart.com",
-      adminEmail: "admin@whizcart.com",
-      defaultCurrency: "INR",
-      orderPrefix: "WC",
-      maintenanceMode: false,
-      analyticsEnabled: true,
-    },
+    defaultValues: currentSettings,
   });
 
   const onSubmit = (data: SystemSettingsValues) => {
     console.log("System settings:", data);
-    toast.success("System settings updated successfully");
+    
+    // Update local state with new settings
+    setCurrentSettings(data);
+    setSettingsUpdated(true);
+    
+    // Show success notification with specific changes
+    toast.success("System settings updated successfully", {
+      description: "Your changes have been saved"
+    });
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {settingsUpdated && (
+          <div className="bg-green-50 border border-green-200 text-green-800 rounded-md p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium">Settings have been updated successfully</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -185,7 +212,25 @@ const SystemSettings = () => {
           />
         </div>
         
-        <Button type="submit">Save Settings</Button>
+        {settingsUpdated && (
+          <div className="text-sm text-muted-foreground">
+            Last updated: {new Date().toLocaleString()}
+          </div>
+        )}
+        
+        <div className="flex gap-2">
+          <Button type="submit">Save Settings</Button>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => {
+              form.reset(currentSettings);
+              setSettingsUpdated(false);
+            }}
+          >
+            Reset Changes
+          </Button>
+        </div>
       </form>
     </Form>
   );
