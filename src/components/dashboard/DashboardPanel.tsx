@@ -25,7 +25,7 @@ import RecentActivities from "./RecentActivities";
 import QuickActionsCard from "./QuickActionsCard";
 
 const DashboardPanel = () => {
-  const [period, setPeriod] = useState("monthly");
+  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly" | "yearly">("monthly");
   const [dateDisplayText, setDateDisplayText] = useState("March 2025");
 
   // Stats data for different periods
@@ -68,7 +68,7 @@ const DashboardPanel = () => {
   const currentStats = statsData[period];
 
   // Handle the date display based on period selected
-  const handlePeriodChange = (newPeriod) => {
+  const handlePeriodChange = (newPeriod: "daily" | "weekly" | "monthly" | "yearly") => {
     setPeriod(newPeriod);
     
     const now = new Date();
