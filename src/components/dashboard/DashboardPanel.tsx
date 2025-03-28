@@ -11,8 +11,7 @@ import {
 import DashboardHeader from "./DashboardHeader";
 import StatsRow from "./StatsRow";
 import ChartSection from "./ChartSection";
-import ProductCategoriesChart from "./ProductCategoriesChart";
-import RecentOrdersTable from "./RecentOrdersTable";
+import DataAnalyticsSection from "./DataAnalyticsSection";
 import RecentActivities from "./RecentActivities";
 import QuickActionsCard from "./QuickActionsCard";
 import { statsData } from "./statsData";
@@ -114,10 +113,7 @@ const DashboardPanel = () => {
       <ChartSection period={period} />
 
       {/* Categories and Orders */}
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        <ProductCategoriesChart period={period} />
-        <RecentOrdersTable period={period} />
-      </div>
+      <DataAnalyticsSection period={period} />
 
       {/* Activities and Quick Actions */}
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
