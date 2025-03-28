@@ -1,669 +1,563 @@
 
-import React from "react";
-import { Bell, Clock, Settings, AlertTriangle, ArrowRight } from "lucide-react";
+import React, { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from "sonner";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Trash2, Bell, Mail, MessageSquare, Settings, Clock, Server, Check, AlertTriangle, PlusCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-// Mock data for integrations
-const integrations = [
-  { 
-    id: "1", 
-    name: "Firebase Cloud Messaging (FCM)", 
-    status: "connected", 
-    type: "push"
+// Mock APIs configuration data
+const mockAPIs = [
+  {
+    id: "api-1",
+    name: "Firebase Cloud Messaging",
+    type: "push",
+    status: "active",
+    key: "********-****-****-****-************",
   },
-  { 
-    id: "2", 
-    name: "SMTP Email Service", 
-    status: "connected", 
-    type: "email"
+  {
+    id: "api-2",
+    name: "SendGrid",
+    type: "email",
+    status: "active",
+    key: "********-****-****-****-************",
   },
-  { 
-    id: "3", 
-    name: "Twilio SMS", 
-    status: "disconnected", 
-    type: "sms"
+  {
+    id: "api-3",
+    name: "Twilio",
+    type: "sms",
+    status: "inactive",
+    key: "",
   },
-  { 
-    id: "4", 
-    name: "OneSignal", 
-    status: "disconnected", 
-    type: "push"
-  },
+  {
+    id: "api-4",
+    name: "OneSignal",
+    type: "push",
+    status: "inactive",
+    key: "",
+  }
 ];
 
-// Mock data for daily quota and limits
-const quotaLimits = {
-  pushNotifications: {
-    daily: 100000,
-    used: 34256,
-    remaining: 65744,
+// Mock channels data
+const mockChannels = [
+  {
+    id: "channel-1",
+    name: "Transactional",
+    description: "Order updates, payment confirmations, etc.",
+    pushEnabled: true,
+    emailEnabled: true,
+    smsEnabled: true,
   },
-  emails: {
-    daily: 50000,
-    used: 12890,
-    remaining: 37110,
+  {
+    id: "channel-2",
+    name: "Marketing",
+    description: "Promotions, offers, and campaigns",
+    pushEnabled: true,
+    emailEnabled: true,
+    smsEnabled: false,
   },
-  sms: {
-    daily: 10000,
-    used: 3456,
-    remaining: 6544,
+  {
+    id: "channel-3",
+    name: "System",
+    description: "System alerts and important notices",
+    pushEnabled: true,
+    emailEnabled: true,
+    smsEnabled: false,
+  }
+];
+
+// Mock rate limits data
+const mockRateLimits = [
+  {
+    id: "limit-1",
+    type: "push",
+    maxPerMinute: 100,
+    maxPerHour: 1000,
+    maxPerDay: 5000,
+    cooldown: 10,
   },
-};
+  {
+    id: "limit-2",
+    type: "email",
+    maxPerMinute: 50,
+    maxPerHour: 500,
+    maxPerDay: 2000,
+    cooldown: 30,
+  },
+  {
+    id: "limit-3",
+    type: "sms",
+    maxPerMinute: 20,
+    maxPerHour: 100,
+    maxPerDay: 500,
+    cooldown: 60,
+  }
+];
 
 const NotificationSettings = () => {
-  const handleSaveGeneralSettings = () => {
-    toast.success("General settings saved successfully");
+  const { toast } = useToast();
+  const [showAddAPIDialog, setShowAddAPIDialog] = useState(false);
+  
+  const handleSaveAPI = (e) => {
+    e.preventDefault();
+    toast({
+      title: "API Configured",
+      description: "Your API configuration has been saved successfully.",
+    });
+    setShowAddAPIDialog(false);
   };
-
-  const handleSaveThrottling = () => {
-    toast.success("Throttling settings saved successfully");
+  
+  const handleDeleteAPI = (apiId) => {
+    toast({
+      title: "API Removed",
+      description: "The API configuration has been removed.",
+    });
   };
-
-  const handleConnectIntegration = (id: string) => {
-    toast.success("Integration connected successfully");
+  
+  const handleUpdateChannel = (channelId, field, value) => {
+    toast({
+      title: "Channel Updated",
+      description: "Notification channel settings have been updated.",
+    });
   };
-
-  const handleDisconnectIntegration = (id: string) => {
-    toast.success("Integration disconnected successfully");
+  
+  const handleSaveRateLimits = () => {
+    toast({
+      title: "Rate Limits Updated",
+      description: "Notification rate limits have been saved.",
+    });
   };
 
   return (
-    <Tabs defaultValue="general" className="w-full space-y-6">
-      <TabsList className="grid grid-cols-4 w-full">
-        <TabsTrigger value="general">
-          <Settings className="h-4 w-4 mr-2" />
-          General
-        </TabsTrigger>
-        <TabsTrigger value="throttling">
-          <Clock className="h-4 w-4 mr-2" />
-          Throttling & Limits
-        </TabsTrigger>
-        <TabsTrigger value="integrations">
-          <ArrowRight className="h-4 w-4 mr-2" />
-          Integrations
-        </TabsTrigger>
-        <TabsTrigger value="monitoring">
-          <AlertTriangle className="h-4 w-4 mr-2" />
-          Monitoring
-        </TabsTrigger>
-      </TabsList>
-      
-      {/* General Settings */}
-      <TabsContent value="general">
-        <Card>
-          <CardHeader>
-            <CardTitle>General Notification Settings</CardTitle>
-            <CardDescription>
-              Configure global notification preferences for all apps
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Default Settings</h3>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Notification Preview</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Show content preview in push notifications
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Sound Enabled</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Play sound when notifications are received
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Vibration</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Vibrate device when notifications are received
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="default-priority">Default Priority</Label>
-                  <Select defaultValue="normal">
-                    <SelectTrigger id="default-priority">
-                      <SelectValue placeholder="Select priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="normal">Normal</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="default-ttl">Default Time-to-Live (TTL)</Label>
-                  <Select defaultValue="86400">
-                    <SelectTrigger id="default-ttl">
-                      <SelectValue placeholder="Select TTL" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="3600">1 Hour</SelectItem>
-                      <SelectItem value="43200">12 Hours</SelectItem>
-                      <SelectItem value="86400">24 Hours</SelectItem>
-                      <SelectItem value="604800">7 Days</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Notification Settings</CardTitle>
+        <CardDescription>Configure notification delivery settings and integrations</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="apis" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="apis">
+              <Server className="h-4 w-4 mr-2" />
+              API Integrations
+            </TabsTrigger>
+            <TabsTrigger value="channels">
+              <Bell className="h-4 w-4 mr-2" />
+              Notification Channels
+            </TabsTrigger>
+            <TabsTrigger value="rate-limits">
+              <Clock className="h-4 w-4 mr-2" />
+              Rate Limits
+            </TabsTrigger>
+            <TabsTrigger value="preferences">
+              <Settings className="h-4 w-4 mr-2" />
+              Default Preferences
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="apis" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">Notification Service Providers</h3>
+              <Button onClick={() => setShowAddAPIDialog(true)} className="gap-2">
+                <PlusCircle className="h-4 w-4" />
+                Add API
+              </Button>
             </div>
             
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Brand Settings</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="notification-icon">Default Notification Icon</Label>
-                  <Input id="notification-icon" placeholder="Upload or enter URL" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="brand-color">Brand Color</Label>
-                  <div className="flex gap-2">
-                    <Input 
-                      id="brand-color" 
-                      defaultValue="#FF5722" 
-                      className="flex-1"
-                    />
-                    <div 
-                      className="h-10 w-10 rounded-md border" 
-                      style={{ backgroundColor: "#FF5722" }}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="sender-name">Default Sender Name</Label>
-                <Input 
-                  id="sender-name" 
-                  defaultValue="WhizCart"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Opt-in/out Settings</h3>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Allow Users to Opt-out</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Let users unsubscribe from non-critical notifications
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Default Opt-in for New Users</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Automatically subscribe new users to notifications
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={handleSaveGeneralSettings}>Save Settings</Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-      
-      {/* Throttling & Limits */}
-      <TabsContent value="throttling">
-        <Card>
-          <CardHeader>
-            <CardTitle>Throttling & Rate Limits</CardTitle>
-            <CardDescription>
-              Configure rate limits and frequency caps for notifications
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Daily Quotas</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Push Notifications</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Daily Limit:</span>
-                        <span className="font-semibold">{quotaLimits.pushNotifications.daily.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Used Today:</span>
-                        <span className="font-semibold">{quotaLimits.pushNotifications.used.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Remaining:</span>
-                        <span className="font-semibold">{quotaLimits.pushNotifications.remaining.toLocaleString()}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                        <div 
-                          className="bg-primary h-2.5 rounded-full" 
-                          style={{ width: `${(quotaLimits.pushNotifications.used / quotaLimits.pushNotifications.daily) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Email Notifications</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Daily Limit:</span>
-                        <span className="font-semibold">{quotaLimits.emails.daily.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Used Today:</span>
-                        <span className="font-semibold">{quotaLimits.emails.used.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Remaining:</span>
-                        <span className="font-semibold">{quotaLimits.emails.remaining.toLocaleString()}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                        <div 
-                          className="bg-primary h-2.5 rounded-full" 
-                          style={{ width: `${(quotaLimits.emails.used / quotaLimits.emails.daily) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">SMS Notifications</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Daily Limit:</span>
-                        <span className="font-semibold">{quotaLimits.sms.daily.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Used Today:</span>
-                        <span className="font-semibold">{quotaLimits.sms.used.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Remaining:</span>
-                        <span className="font-semibold">{quotaLimits.sms.remaining.toLocaleString()}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                        <div 
-                          className="bg-primary h-2.5 rounded-full" 
-                          style={{ width: `${(quotaLimits.sms.used / quotaLimits.sms.daily) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Throttling Rules</h3>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="user-rate-limit">Maximum Notifications Per User</Label>
-                    <div className="flex gap-4">
-                      <Input 
-                        id="user-rate-limit" 
-                        type="number" 
-                        defaultValue="10" 
-                        min="1" 
-                        className="w-24" 
-                      />
-                      <Select defaultValue="day">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select period" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hour">Per Hour</SelectItem>
-                          <SelectItem value="day">Per Day</SelectItem>
-                          <SelectItem value="week">Per Week</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="min-interval">Minimum Interval Between Notifications</Label>
-                    <div className="flex gap-4">
-                      <Input 
-                        id="min-interval" 
-                        type="number" 
-                        defaultValue="30" 
-                        min="0" 
-                        className="w-24" 
-                      />
-                      <Select defaultValue="minutes">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select unit" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="seconds">Seconds</SelectItem>
-                          <SelectItem value="minutes">Minutes</SelectItem>
-                          <SelectItem value="hours">Hours</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="batch-size">Maximum Batch Size (Bulk Notifications)</Label>
-                  <Input 
-                    id="batch-size" 
-                    type="number" 
-                    defaultValue="10000" 
-                    min="100" 
-                    className="w-full" 
-                  />
-                </div>
-                
-                <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Quiet Hours</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Don't send non-critical notifications during late hours
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="quiet-start">Quiet Hours Start</Label>
-                    <Input 
-                      id="quiet-start" 
-                      type="time" 
-                      defaultValue="22:00" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="quiet-end">Quiet Hours End</Label>
-                    <Input 
-                      id="quiet-end" 
-                      type="time" 
-                      defaultValue="07:00" 
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={handleSaveThrottling}>Save Throttling Settings</Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-      
-      {/* Integrations */}
-      <TabsContent value="integrations">
-        <Card>
-          <CardHeader>
-            <CardTitle>Notification Integrations</CardTitle>
-            <CardDescription>
-              Connect with external messaging and notification services
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border overflow-hidden">
+            <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Integration</TableHead>
+                    <TableHead>Service Name</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>API Key</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {integrations.map((integration) => (
-                    <TableRow key={integration.id}>
-                      <TableCell className="font-medium">{integration.name}</TableCell>
+                  {mockAPIs.map((api) => (
+                    <TableRow key={api.id}>
+                      <TableCell className="font-medium">{api.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {api.type === "push" && <Bell className="h-3 w-3 mr-1" />}
+                          {api.type === "email" && <Mail className="h-3 w-3 mr-1" />}
+                          {api.type === "sms" && <MessageSquare className="h-3 w-3 mr-1" />}
+                          {api.type.charAt(0).toUpperCase() + api.type.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={api.status === "active" ? "default" : "secondary"} className="gap-1">
+                          {api.status === "active" ? <Check className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+                          {api.status === "active" ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {api.key ? api.key : "Not configured"}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Bell className="h-4 w-4" />
-                          <span className="capitalize">{integration.type}</span>
+                          <Button variant="ghost" size="sm">
+                            Configure
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteAPI(api.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        {integration.status === 'connected' ? (
-                          <span className="flex items-center gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-green-500"></span>
-                            Connected
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-gray-300"></span>
-                            Disconnected
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {integration.status === 'connected' ? (
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDisconnectIntegration(integration.id)}
-                          >
-                            Disconnect
-                          </Button>
-                        ) : (
-                          <Button 
-                            size="sm"
-                            onClick={() => handleConnectIntegration(integration.id)}
-                          >
-                            Connect
-                          </Button>
-                        )}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add New Integration
-            </Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Testing</h3>
+              <div className="flex items-center gap-4">
+                <Button variant="outline">Send Test Push Notification</Button>
+                <Button variant="outline">Send Test Email</Button>
+                <Button variant="outline">Send Test SMS</Button>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="channels" className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Notification Channels</h3>
+              <p className="text-sm text-muted-foreground">
+                Configure which notification types are enabled for each channel
+              </p>
+            </div>
+            
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Channel</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Push</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>SMS</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockChannels.map((channel) => (
+                    <TableRow key={channel.id}>
+                      <TableCell className="font-medium">{channel.name}</TableCell>
+                      <TableCell>{channel.description}</TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={channel.pushEnabled}
+                          onCheckedChange={(checked) => handleUpdateChannel(channel.id, "pushEnabled", checked)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={channel.emailEnabled}
+                          onCheckedChange={(checked) => handleUpdateChannel(channel.id, "emailEnabled", checked)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={channel.smsEnabled}
+                          onCheckedChange={(checked) => handleUpdateChannel(channel.id, "smsEnabled", checked)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Button variant="outline" className="gap-2">
+                <PlusCircle className="h-4 w-4" />
+                Add Channel
+              </Button>
+              <Button>Save Changes</Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="rate-limits" className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium">Rate Limiting</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Control how many notifications can be sent in a given time period
+                  </p>
+                </div>
+                <Button variant="outline">Reset to Defaults</Button>
+              </div>
+            </div>
+            
+            <div className="space-y-8">
+              {mockRateLimits.map((limit) => (
+                <div key={limit.id} className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    {limit.type === "push" && <Bell className="h-5 w-5" />}
+                    {limit.type === "email" && <Mail className="h-5 w-5" />}
+                    {limit.type === "sms" && <MessageSquare className="h-5 w-5" />}
+                    <h4 className="text-base font-medium">
+                      {limit.type.charAt(0).toUpperCase() + limit.type.slice(1)} Notification Limits
+                    </h4>
+                  </div>
+                  
+                  <div className="space-y-8">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor={`${limit.id}-per-minute`}>Max per minute: {limit.maxPerMinute}</Label>
+                        <span className="text-sm text-muted-foreground w-12 text-right">{limit.maxPerMinute}</span>
+                      </div>
+                      <Slider
+                        id={`${limit.id}-per-minute`}
+                        defaultValue={[limit.maxPerMinute]}
+                        max={200}
+                        step={5}
+                      />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor={`${limit.id}-per-hour`}>Max per hour: {limit.maxPerHour}</Label>
+                        <span className="text-sm text-muted-foreground w-12 text-right">{limit.maxPerHour}</span>
+                      </div>
+                      <Slider
+                        id={`${limit.id}-per-hour`}
+                        defaultValue={[limit.maxPerHour]}
+                        max={2000}
+                        step={50}
+                      />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor={`${limit.id}-per-day`}>Max per day: {limit.maxPerDay}</Label>
+                        <span className="text-sm text-muted-foreground w-12 text-right">{limit.maxPerDay}</span>
+                      </div>
+                      <Slider
+                        id={`${limit.id}-per-day`}
+                        defaultValue={[limit.maxPerDay]}
+                        max={10000}
+                        step={100}
+                      />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor={`${limit.id}-cooldown`}>
+                          Cooldown period (seconds): {limit.cooldown}
+                        </Label>
+                        <span className="text-sm text-muted-foreground w-12 text-right">{limit.cooldown}</span>
+                      </div>
+                      <Slider
+                        id={`${limit.id}-cooldown`}
+                        defaultValue={[limit.cooldown]}
+                        max={300}
+                        step={5}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Minimum time between notifications sent to the same user
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex justify-end">
+              <Button onClick={handleSaveRateLimits}>Save Rate Limits</Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="preferences" className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Default User Preferences</h3>
+              <p className="text-sm text-muted-foreground">
+                Set default notification preferences for new users
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <div className="flex items-center">
+                    <Bell className="h-4 w-4 mr-2" />
+                    <span className="font-medium">Push Notifications</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Send notifications to users' devices
+                  </div>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 mr-2" />
+                    <span className="font-medium">Email Notifications</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Send notification emails to users
+                  </div>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <div className="flex items-center">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    <span className="font-medium">SMS Notifications</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Send SMS text messages to users
+                  </div>
+                </div>
+                <Switch />
+              </div>
+            </div>
+            
+            <div className="space-y-4 pt-4">
+              <h3 className="text-lg font-medium">Time Settings</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="quiet-hours-start">Quiet Hours Start</Label>
+                  <Select defaultValue="22">
+                    <SelectTrigger id="quiet-hours-start">
+                      <SelectValue placeholder="Select time" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...Array(24)].map((_, i) => (
+                        <SelectItem key={i} value={i.toString()}>
+                          {i < 10 ? `0${i}:00` : `${i}:00`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="quiet-hours-end">Quiet Hours End</Label>
+                  <Select defaultValue="7">
+                    <SelectTrigger id="quiet-hours-end">
+                      <SelectValue placeholder="Select time" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...Array(24)].map((_, i) => (
+                        <SelectItem key={i} value={i.toString()}>
+                          {i < 10 ? `0${i}:00` : `${i}:00`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch id="respect-quiet-hours" defaultChecked />
+                <Label htmlFor="respect-quiet-hours">Respect quiet hours for marketing notifications</Label>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Transactional notifications will still be delivered during quiet hours
+              </p>
+            </div>
+            
+            <div className="flex justify-end">
+              <Button>Save Preferences</Button>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
       
-      {/* Monitoring */}
-      <TabsContent value="monitoring">
-        <Card>
-          <CardHeader>
-            <CardTitle>Notification Monitoring</CardTitle>
-            <CardDescription>
-              Monitor delivery performance and set up alerts
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Delivery Alerts</h3>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Alert on Low Delivery Rate</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get notified when delivery success rate drops below threshold
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="delivery-threshold">Delivery Rate Threshold</Label>
-                <div className="flex items-center gap-2">
-                  <Input 
-                    id="delivery-threshold" 
-                    type="number" 
-                    defaultValue="90" 
-                    min="1" 
-                    max="100"
-                    className="w-24" 
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Alert on Queue Buildup</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get notified when notification queue exceeds threshold
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="queue-threshold">Queue Size Threshold</Label>
-                <Input 
-                  id="queue-threshold" 
-                  type="number" 
-                  defaultValue="1000" 
-                  min="1" 
-                  className="w-full" 
-                />
+      {/* Add API Dialog */}
+      <Dialog open={showAddAPIDialog} onOpenChange={setShowAddAPIDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add API Integration</DialogTitle>
+            <DialogDescription>
+              Configure a new notification service provider
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSaveAPI} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="api-service">Service Type</Label>
+              <Select defaultValue="push">
+                <SelectTrigger id="api-service">
+                  <SelectValue placeholder="Select service type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="push">Push Notification Service</SelectItem>
+                  <SelectItem value="email">Email Service</SelectItem>
+                  <SelectItem value="sms">SMS Service</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="api-provider">Service Provider</Label>
+              <Select defaultValue="firebase">
+                <SelectTrigger id="api-provider">
+                  <SelectValue placeholder="Select provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="firebase">Firebase Cloud Messaging</SelectItem>
+                  <SelectItem value="onesignal">OneSignal</SelectItem>
+                  <SelectItem value="sendgrid">SendGrid</SelectItem>
+                  <SelectItem value="twilio">Twilio</SelectItem>
+                  <SelectItem value="custom">Custom API</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="api-name">Display Name</Label>
+              <Input id="api-name" placeholder="e.g., Production FCM" />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="api-key">API Key</Label>
+              <Input id="api-key" type="password" placeholder="Enter your API key" />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="api-secret">API Secret (if applicable)</Label>
+              <Input id="api-secret" type="password" placeholder="Enter your API secret" />
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Switch id="active-status" defaultChecked />
+                <Label htmlFor="active-status">Set as active</Label>
               </div>
             </div>
             
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Notification Logs</h3>
-              
-              <div className="space-y-2">
-                <Label htmlFor="log-retention">Log Retention Period</Label>
-                <Select defaultValue="90">
-                  <SelectTrigger id="log-retention">
-                    <SelectValue placeholder="Select retention period" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="30">30 Days</SelectItem>
-                    <SelectItem value="60">60 Days</SelectItem>
-                    <SelectItem value="90">90 Days</SelectItem>
-                    <SelectItem value="180">180 Days</SelectItem>
-                    <SelectItem value="365">1 Year</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Enable Detailed Logging</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Log detailed information about each notification
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Notification Analytics</h3>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Track Open Rate</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Track when users open notifications
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Track Click Rate</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Track when users click on notification CTAs
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              
-              <div className="flex flex-row items-center justify-between space-x-2 rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Track Conversions</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Track actions taken after notification interaction
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={() => toast.success("Monitoring settings saved successfully")}>
-              Save Monitoring Settings
-            </Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-    </Tabs>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowAddAPIDialog(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Save Configuration</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </Card>
   );
 };
 

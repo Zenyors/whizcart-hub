@@ -25,8 +25,9 @@ const Notifications = () => {
           <PageHeader
             title="Notification Management"
             description="Create, manage, and track notifications across all your apps"
-            icon={<BellRing className="h-6 w-6" />}
-          />
+          >
+            <BellRing className="h-6 w-6" />
+          </PageHeader>
           
           <Tabs defaultValue="create" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="grid grid-cols-4 w-full">

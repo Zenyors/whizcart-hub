@@ -1,547 +1,565 @@
 
 import React, { useState } from "react";
-import { PlusCircle, File, FileEdit, FileX, AlignJustify, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, Plus, Copy, Trash2, Edit, Send, Bell, MessageSquare, Tag, User, FileText, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-// Sample template categories
-const templateCategories = [
-  "Order Updates",
-  "Promotions",
-  "Account Alerts",
-  "System Notifications",
-  "Delivery Updates",
-  "Payment Notifications",
-];
-
-// Sample templates
-const initialTemplates = [
+const templates = [
   {
-    id: "1",
+    id: "template-1",
     name: "Order Confirmation",
-    category: "Order Updates",
-    content: "Thank you for your order #{{orderId}}! Your order has been confirmed and is being processed.",
-    title: "Your Order #{{orderId}} is Confirmed",
-    variables: ["orderId"],
-    targetApp: "customer",
+    type: "transactional",
+    app: "customer",
+    lastEdited: "2023-07-15",
+    subject: "Your order has been confirmed",
+    body: "Dear {{customer_name}}, we're happy to confirm your order #{{order_id}} has been received and is being processed. You'll receive another notification once it ships. Thank you for shopping with us!",
+    variables: ["customer_name", "order_id"],
   },
   {
-    id: "2",
-    name: "Order Dispatched",
-    category: "Order Updates",
-    content: "Great news! Your order #{{orderId}} has been dispatched and is on its way to you. Track your delivery with this link: {{trackingLink}}",
-    title: "Your Order #{{orderId}} is on the Way!",
-    variables: ["orderId", "trackingLink"],
-    targetApp: "customer",
+    id: "template-2",
+    name: "Delivery Assignment",
+    type: "transactional",
+    app: "rider",
+    lastEdited: "2023-07-10",
+    subject: "New delivery assignment",
+    body: "Hi {{rider_name}}, you have a new delivery assignment. Order #{{order_id}} is ready for pickup from {{vendor_name}} at {{pickup_address}}. Please proceed to the pickup location.",
+    variables: ["rider_name", "order_id", "vendor_name", "pickup_address"],
   },
   {
-    id: "3",
+    id: "template-3",
     name: "New Order Received",
-    category: "Order Updates",
-    content: "You have received a new order #{{orderId}}. Please prepare it within {{preparationTime}} minutes.",
-    title: "New Order #{{orderId}} Received",
-    variables: ["orderId", "preparationTime"],
-    targetApp: "vendor",
+    type: "transactional",
+    app: "vendor",
+    lastEdited: "2023-07-05",
+    subject: "New order received",
+    body: "Hello {{vendor_name}}, you have received a new order #{{order_id}} from {{customer_name}}. Please review and confirm the order as soon as possible.",
+    variables: ["vendor_name", "order_id", "customer_name"],
   },
   {
-    id: "4",
-    name: "Weekend Sale",
-    category: "Promotions",
-    content: "Don't miss our weekend sale! Get {{discountPercent}}% off on all items this weekend only. Shop now!",
-    title: "Weekend Sale - {{discountPercent}}% OFF Everything!",
-    variables: ["discountPercent"],
-    targetApp: "customer",
+    id: "template-4",
+    name: "Promotional Offer",
+    type: "marketing",
+    app: "customer",
+    lastEdited: "2023-06-28",
+    subject: "Special offer just for you!",
+    body: "Hi {{customer_name}}, we've got a special offer just for you! Use code {{promo_code}} to get {{discount_amount}} off your next purchase until {{expiry_date}}.",
+    variables: ["customer_name", "promo_code", "discount_amount", "expiry_date"],
   },
   {
-    id: "5",
-    name: "Low Stock Alert",
-    category: "System Notifications",
-    content: "Your product '{{productName}}' is running low on stock ({{currentStock}} remaining). Please restock soon.",
-    title: "Low Stock Alert: {{productName}}",
-    variables: ["productName", "currentStock"],
-    targetApp: "vendor",
+    id: "template-5",
+    name: "Weekly Earnings Summary",
+    type: "transactional",
+    app: "vendor",
+    lastEdited: "2023-06-22",
+    subject: "Your weekly earnings summary",
+    body: "Dear {{vendor_name}}, here's your earnings summary for the week of {{week_start}} to {{week_end}}. Total orders: {{total_orders}}. Total earnings: {{total_earnings}}.",
+    variables: ["vendor_name", "week_start", "week_end", "total_orders", "total_earnings"],
   },
 ];
 
-interface Template {
-  id: string;
-  name: string;
-  category: string;
-  content: string;
-  title: string;
-  variables: string[];
-  targetApp: string;
-}
+const TemplateVariable = ({ name }) => (
+  <Badge variant="outline" className="mr-1 mb-1 cursor-help">
+    <Tag className="h-3 w-3 mr-1" /> {name}
+  </Badge>
+);
 
 const NotificationTemplates = () => {
-  const [templates, setTemplates] = useState<Template[]>(initialTemplates);
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [appFilter, setAppFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newTemplate, setNewTemplate] = useState<Partial<Template>>({
-    name: "",
-    category: "",
-    content: "",
-    title: "",
-    variables: [],
-    targetApp: "customer",
-  });
-  const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
-  const [variablesInput, setVariablesInput] = useState("");
-
-  // Filter templates based on category, app, and search query
-  const filteredTemplates = templates.filter((template) => {
-    const matchesCategory = categoryFilter === "" || template.category === categoryFilter;
-    const matchesApp = appFilter === "" || template.targetApp === appFilter;
-    const matchesSearch = searchQuery === "" || 
-      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.content.toLowerCase().includes(searchQuery.toLowerCase());
+  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [filterApp, setFilterApp] = useState("all");
+  const [showNewTemplateDialog, setShowNewTemplateDialog] = useState(false);
+  const [showEditTemplateDialog, setShowEditTemplateDialog] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  
+  const filteredTemplates = templates.filter(template => {
+    const searchMatch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        template.subject.toLowerCase().includes(searchTerm.toLowerCase());
+    const typeMatch = filterType === "all" || template.type === filterType;
+    const appMatch = filterApp === "all" || template.app === filterApp;
     
-    return matchesCategory && matchesApp && matchesSearch;
+    return searchMatch && typeMatch && appMatch;
   });
 
-  const handleAddTemplate = () => {
-    if (!newTemplate.name || !newTemplate.category || !newTemplate.content || !newTemplate.title) {
-      toast.error("Please fill all required fields");
-      return;
-    }
-    
-    const variables = variablesInput.split(",").map(v => v.trim()).filter(v => v);
-    
-    const template: Template = {
-      id: Date.now().toString(),
-      name: newTemplate.name,
-      category: newTemplate.category,
-      content: newTemplate.content,
-      title: newTemplate.title,
-      variables: variables,
-      targetApp: newTemplate.targetApp || "customer",
-    };
-    
-    setTemplates([...templates, template]);
-    setNewTemplate({
-      name: "",
-      category: "",
-      content: "",
-      title: "",
-      variables: [],
-      targetApp: "customer",
+  const handleEditClick = (template) => {
+    setSelectedTemplate(template);
+    setShowEditTemplateDialog(true);
+  };
+
+  const handlePreviewClick = (template) => {
+    setSelectedTemplate(template);
+    setShowPreviewDialog(true);
+  };
+
+  const handleDuplicateTemplate = (template) => {
+    toast({
+      title: "Template Duplicated",
+      description: `"${template.name}" has been duplicated. You can now edit the copy.`,
     });
-    setVariablesInput("");
-    setIsAddDialogOpen(false);
-    toast.success("Template added successfully");
   };
 
-  const handleEditTemplate = () => {
-    if (!editingTemplate) return;
-    
-    const variables = variablesInput.split(",").map(v => v.trim()).filter(v => v);
-    const updatedTemplate = { ...editingTemplate, variables };
-    
-    setTemplates(templates.map(t => t.id === updatedTemplate.id ? updatedTemplate : t));
-    setEditingTemplate(null);
-    setVariablesInput("");
-    toast.success("Template updated successfully");
+  const handleDeleteTemplate = (templateId) => {
+    toast({
+      title: "Template Deleted",
+      description: "The template has been deleted successfully.",
+    });
   };
 
-  const handleDeleteTemplate = (id: string) => {
-    setTemplates(templates.filter(t => t.id !== id));
-    toast.success("Template deleted successfully");
-  };
-
-  const startEdit = (template: Template) => {
-    setEditingTemplate(template);
-    setVariablesInput(template.variables.join(", "));
-  };
-
-  const handleDuplicateTemplate = (template: Template) => {
-    const newId = Date.now().toString();
-    const duplicatedTemplate = {
-      ...template,
-      id: newId,
-      name: `${template.name} (Copy)`,
-    };
-    
-    setTemplates([...templates, duplicatedTemplate]);
-    toast.success("Template duplicated successfully");
-  };
-
-  const getAppLabel = (app: string) => {
-    switch (app) {
-      case "customer": return "Customer App";
-      case "rider": return "Rider App";
-      case "vendor": return "Vendor App";
-      case "all": return "All Apps";
-      default: return app;
-    }
+  const handleSaveTemplate = (e) => {
+    e.preventDefault();
+    toast({
+      title: "Template Saved",
+      description: "Your template has been saved successfully.",
+    });
+    setShowNewTemplateDialog(false);
+    setShowEditTemplateDialog(false);
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Notification Templates</CardTitle>
-              <CardDescription>
-                Create and manage reusable notification templates
-              </CardDescription>
-            </div>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Template
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                  <DialogTitle>Create New Template</DialogTitle>
-                  <DialogDescription>
-                    Create a reusable notification template with variables
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <Label htmlFor="name">Template Name</Label>
-                      <Input
-                        id="name"
-                        value={newTemplate.name}
-                        onChange={(e) => setNewTemplate({ ...newTemplate, name: e.target.value })}
-                        placeholder="e.g., Order Confirmation"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="category">Category</Label>
-                      <Select 
-                        value={newTemplate.category} 
-                        onValueChange={(value) => setNewTemplate({ ...newTemplate, category: value })}
-                      >
-                        <SelectTrigger id="category">
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {templateCategories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="targetApp">Target App</Label>
-                      <Select 
-                        value={newTemplate.targetApp} 
-                        onValueChange={(value) => setNewTemplate({ ...newTemplate, targetApp: value })}
-                      >
-                        <SelectTrigger id="targetApp">
-                          <SelectValue placeholder="Select target app" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="customer">Customer App</SelectItem>
-                          <SelectItem value="rider">Rider App</SelectItem>
-                          <SelectItem value="vendor">Vendor App</SelectItem>
-                          <SelectItem value="all">All Apps</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="title">Notification Title</Label>
-                      <Input
-                        id="title"
-                        value={newTemplate.title}
-                        onChange={(e) => setNewTemplate({ ...newTemplate, title: e.target.value })}
-                        placeholder="e.g., Your Order #{{orderId}} is Confirmed"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Use {{variableName}} syntax for dynamic content
-                      </p>
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="content">Notification Content</Label>
-                      <Textarea
-                        id="content"
-                        value={newTemplate.content}
-                        onChange={(e) => setNewTemplate({ ...newTemplate, content: e.target.value })}
-                        placeholder="e.g., Thank you for your order #{{orderId}}! Your order has been confirmed and is being processed."
-                        rows={4}
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Use {{variableName}} syntax for dynamic content
-                      </p>
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="variables">Variables (comma separated)</Label>
-                      <Input
-                        id="variables"
-                        value={variablesInput}
-                        onChange={(e) => setVariablesInput(e.target.value)}
-                        placeholder="e.g., orderId, customerName, amount"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddTemplate}>Save Template</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+    <Card>
+      <CardHeader>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <CardTitle>Notification Templates</CardTitle>
+            <CardDescription>Manage templates for emails, push notifications, and SMS</CardDescription>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Input
-                placeholder="Search templates..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1"
-              />
-              <div className="flex flex-row gap-2">
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
-                    {templateCategories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <Select value={appFilter} onValueChange={setAppFilter}>
-                  <SelectTrigger className="w-[160px]">
-                    <SelectValue placeholder="All Apps" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Apps</SelectItem>
-                    <SelectItem value="customer">Customer</SelectItem>
-                    <SelectItem value="rider">Rider</SelectItem>
-                    <SelectItem value="vendor">Vendor</SelectItem>
-                    <SelectItem value="all">Multi-App</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          <Button onClick={() => setShowNewTemplateDialog(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Template
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search templates..."
+              className="pl-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Template Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="transactional">Transactional</SelectItem>
+                <SelectItem value="marketing">Marketing</SelectItem>
+              </SelectContent>
+            </Select>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredTemplates.map((template) => (
-                <Card key={template.id} className="overflow-hidden">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1">
-                        <CardTitle className="text-base">{template.name}</CardTitle>
-                        <CardDescription className="flex items-center gap-1">
-                          <AlignJustify className="h-3 w-3" />
-                          {template.category}
-                        </CardDescription>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => startEdit(template)}
-                          className="h-8 w-8"
+            <Select value={filterApp} onValueChange={setFilterApp}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="App" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Apps</SelectItem>
+                <SelectItem value="customer">Customer App</SelectItem>
+                <SelectItem value="rider">Rider App</SelectItem>
+                <SelectItem value="vendor">Vendor App</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Template Name</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>App</TableHead>
+                <TableHead>Last Edited</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredTemplates.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6">
+                    No templates found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredTemplates.map((template) => (
+                  <TableRow key={template.id}>
+                    <TableCell className="font-medium">{template.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={template.type === "transactional" ? "default" : "secondary"}>
+                        {template.type === "transactional" ? "Transactional" : "Marketing"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {template.app === "customer" && <User className="h-3 w-3 mr-1" />}
+                        {template.app === "rider" && <Send className="h-3 w-3 mr-1" />}
+                        {template.app === "vendor" && <Store className="h-3 w-3 mr-1" />}
+                        {template.app.charAt(0).toUpperCase() + template.app.slice(1)} App
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{template.lastEdited}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handlePreviewClick(template)}
+                          title="Preview"
                         >
-                          <FileEdit className="h-4 w-4" />
-                          <span className="sr-only">Edit</span>
+                          <ExternalLink className="h-4 w-4" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditClick(template)}
+                          title="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleDuplicateTemplate(template)}
-                          className="h-8 w-8"
+                          title="Duplicate"
                         >
                           <Copy className="h-4 w-4" />
-                          <span className="sr-only">Duplicate</span>
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleDeleteTemplate(template.id)}
-                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          title="Delete"
                         >
-                          <FileX className="h-4 w-4" />
-                          <span className="sr-only">Delete</span>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border text-sm">
-                      <div className="font-medium mb-1">{template.title}</div>
-                      <div className="text-muted-foreground">{template.content}</div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <div className="text-xs text-muted-foreground">
-                      <span className="font-medium">Variables:</span>{" "}
-                      {template.variables.join(", ") || "None"}
-                    </div>
-                    <div className="text-xs">
-                      <span className="px-2 py-1 rounded-full bg-muted text-muted-foreground">
-                        {getAppLabel(template.targetApp)}
-                      </span>
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))}
-              
-              {filteredTemplates.length === 0 && (
-                <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
-                  <File className="h-10 w-10 text-muted-foreground mb-2" />
-                  <h3 className="text-lg font-medium">No templates found</h3>
-                  <p className="text-muted-foreground">
-                    {searchQuery || categoryFilter || appFilter 
-                      ? "Try adjusting your filters" 
-                      : "Create your first template to get started"}
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => setIsAddDialogOpen(true)}
-                  >
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Create Template
-                  </Button>
-                </div>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Edit Template Dialog */}
-      {editingTemplate && (
-        <Dialog open={!!editingTemplate} onOpenChange={(open) => !open && setEditingTemplate(null)}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Edit Template</DialogTitle>
-              <DialogDescription>
-                Update your notification template
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+
+      {/* New Template Dialog */}
+      <Dialog open={showNewTemplateDialog} onOpenChange={setShowNewTemplateDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Create New Template</DialogTitle>
+            <DialogDescription>
+              Create a notification template for emails, push notifications, or SMS
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSaveTemplate} className="space-y-6">
+            <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <Label htmlFor="edit-name">Template Name</Label>
-                  <Input
-                    id="edit-name"
-                    value={editingTemplate.name}
-                    onChange={(e) => setEditingTemplate({ ...editingTemplate, name: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="template-name">Template Name</Label>
+                  <Input id="template-name" placeholder="e.g., Order Confirmation" />
                 </div>
-                <div>
-                  <Label htmlFor="edit-category">Category</Label>
-                  <Select 
-                    value={editingTemplate.category} 
-                    onValueChange={(value) => setEditingTemplate({ ...editingTemplate, category: value })}
-                  >
-                    <SelectTrigger id="edit-category">
-                      <SelectValue />
+                <div className="space-y-2">
+                  <Label htmlFor="template-type">Template Type</Label>
+                  <Select defaultValue="transactional">
+                    <SelectTrigger id="template-type">
+                      <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {templateCategories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="transactional">Transactional</SelectItem>
+                      <SelectItem value="marketing">Marketing</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="edit-targetApp">Target App</Label>
-                  <Select 
-                    value={editingTemplate.targetApp} 
-                    onValueChange={(value) => setEditingTemplate({ ...editingTemplate, targetApp: value })}
-                  >
-                    <SelectTrigger id="edit-targetApp">
-                      <SelectValue />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="app-target">Target App</Label>
+                  <Select defaultValue="customer">
+                    <SelectTrigger id="app-target">
+                      <SelectValue placeholder="Select app" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="customer">Customer App</SelectItem>
                       <SelectItem value="rider">Rider App</SelectItem>
                       <SelectItem value="vendor">Vendor App</SelectItem>
-                      <SelectItem value="all">All Apps</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="col-span-2">
-                  <Label htmlFor="edit-title">Notification Title</Label>
-                  <Input
-                    id="edit-title"
-                    value={editingTemplate.title}
-                    onChange={(e) => setEditingTemplate({ ...editingTemplate, title: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="delivery-channel">Delivery Channel</Label>
+                  <Select defaultValue="all">
+                    <SelectTrigger id="delivery-channel">
+                      <SelectValue placeholder="Select channel" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Channels</SelectItem>
+                      <SelectItem value="push">Push Notification</SelectItem>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="sms">SMS</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="col-span-2">
-                  <Label htmlFor="edit-content">Notification Content</Label>
-                  <Textarea
-                    id="edit-content"
-                    value={editingTemplate.content}
-                    onChange={(e) => setEditingTemplate({ ...editingTemplate, content: e.target.value })}
-                    rows={4}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Use {{variableName}} syntax for dynamic content
-                  </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject/Title</Label>
+                <Input id="subject" placeholder="Notification subject or title" />
+                <p className="text-xs text-muted-foreground">
+                  For push notifications, this will be the notification title
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="body">Message Body</Label>
+                  <div className="text-xs text-muted-foreground">
+                    Use {'{{variable_name}}'} for dynamic content
+                  </div>
                 </div>
-                <div className="col-span-2">
-                  <Label htmlFor="edit-variables">Variables (comma separated)</Label>
-                  <Input
-                    id="edit-variables"
-                    value={variablesInput}
-                    onChange={(e) => setVariablesInput(e.target.value)}
-                  />
+                <Textarea 
+                  id="body" 
+                  rows={5} 
+                  placeholder="Enter the message body with {{variables}} for dynamic content" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Available Variables</Label>
+                <div className="flex flex-wrap gap-1 p-2 border rounded-md">
+                  <TemplateVariable name="customer_name" />
+                  <TemplateVariable name="order_id" />
+                  <TemplateVariable name="vendor_name" />
+                  <TemplateVariable name="product_name" />
+                  <TemplateVariable name="delivery_date" />
+                  <TemplateVariable name="rider_name" />
+                  <TemplateVariable name="amount" />
+                  <TemplateVariable name="status" />
                 </div>
               </div>
             </div>
+            
             <DialogFooter>
-              <Button variant="outline" onClick={() => setEditingTemplate(null)}>
+              <Button type="button" variant="outline" onClick={() => setShowNewTemplateDialog(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleEditTemplate}>Update Template</Button>
+              <Button type="submit">Save Template</Button>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-    </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Template Dialog */}
+      <Dialog open={showEditTemplateDialog} onOpenChange={setShowEditTemplateDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Template</DialogTitle>
+            <DialogDescription>
+              Modify an existing notification template
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedTemplate && (
+            <form onSubmit={handleSaveTemplate} className="space-y-6">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-template-name">Template Name</Label>
+                    <Input 
+                      id="edit-template-name" 
+                      defaultValue={selectedTemplate.name} 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-template-type">Template Type</Label>
+                    <Select defaultValue={selectedTemplate.type}>
+                      <SelectTrigger id="edit-template-type">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="transactional">Transactional</SelectItem>
+                        <SelectItem value="marketing">Marketing</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-app-target">Target App</Label>
+                    <Select defaultValue={selectedTemplate.app}>
+                      <SelectTrigger id="edit-app-target">
+                        <SelectValue placeholder="Select app" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="customer">Customer App</SelectItem>
+                        <SelectItem value="rider">Rider App</SelectItem>
+                        <SelectItem value="vendor">Vendor App</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-delivery-channel">Delivery Channel</Label>
+                    <Select defaultValue="all">
+                      <SelectTrigger id="edit-delivery-channel">
+                        <SelectValue placeholder="Select channel" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Channels</SelectItem>
+                        <SelectItem value="push">Push Notification</SelectItem>
+                        <SelectItem value="email">Email</SelectItem>
+                        <SelectItem value="sms">SMS</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="edit-subject">Subject/Title</Label>
+                  <Input 
+                    id="edit-subject" 
+                    defaultValue={selectedTemplate.subject} 
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="edit-body">Message Body</Label>
+                    <div className="text-xs text-muted-foreground">
+                      Use {'{{variable_name}}'} for dynamic content
+                    </div>
+                  </div>
+                  <Textarea 
+                    id="edit-body" 
+                    rows={5} 
+                    defaultValue={selectedTemplate.body} 
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Variables Used</Label>
+                  <div className="flex flex-wrap gap-1 p-2 border rounded-md">
+                    {selectedTemplate.variables.map((variable) => (
+                      <TemplateVariable key={variable} name={variable} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setShowEditTemplateDialog(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save Changes</Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Template Preview Dialog */}
+      <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Template Preview</DialogTitle>
+            <DialogDescription>
+              Preview how your notification will appear
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedTemplate && (
+            <div className="space-y-6">
+              <Tabs defaultValue="push">
+                <TabsList className="grid grid-cols-3 w-full">
+                  <TabsTrigger value="push">
+                    <Bell className="h-4 w-4 mr-2" />
+                    Push
+                  </TabsTrigger>
+                  <TabsTrigger value="email">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Email
+                  </TabsTrigger>
+                  <TabsTrigger value="sms">
+                    <FileText className="h-4 w-4 mr-2" />
+                    SMS
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="push" className="space-y-4 pt-4">
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                    <div className="flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                        <Bell className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold">{selectedTemplate.subject}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {selectedTemplate.body.replace(/{{([^}]+)}}/g, (_, varName) => `[${varName}]`)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="email" className="space-y-4 pt-4">
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                    <p className="font-semibold mb-2">Subject: {selectedTemplate.subject}</p>
+                    <div className="border-t pt-2">
+                      <p className="text-sm">
+                        {selectedTemplate.body.replace(/{{([^}]+)}}/g, (_, varName) => `[${varName}]`)}
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="sms" className="space-y-4 pt-4">
+                  <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                    <p className="text-sm">
+                      {selectedTemplate.body.replace(/{{([^}]+)}}/g, (_, varName) => `[${varName}]`)}
+                    </p>
+                  </div>
+                </TabsContent>
+              </Tabs>
+              
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Variables that will be replaced:</h4>
+                <div className="text-sm space-y-1">
+                  {selectedTemplate.variables.map((variable) => (
+                    <div key={variable} className="flex items-center">
+                      <Badge variant="outline" className="mr-2">
+                        {`{{${variable}}}`}
+                      </Badge>
+                      <span className="text-muted-foreground">→</span>
+                      <span className="ml-2 font-medium">[Dynamic {variable.replace(/_/g, ' ')}]</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button onClick={() => setShowPreviewDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Card>
   );
 };
 

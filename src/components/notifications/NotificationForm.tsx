@@ -1,339 +1,332 @@
 
-import React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-
-const notificationSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title cannot exceed 100 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters").max(500, "Message cannot exceed 500 characters"),
-  targetApp: z.enum(["customer", "rider", "vendor", "all"]),
-  userSegment: z.string().optional(),
-  notificationType: z.enum(["info", "success", "warning", "critical"]),
-  actionUrl: z.string().url("Please enter a valid URL").optional().or(z.literal('')),
-  scheduleForLater: z.boolean().default(false),
-  scheduledTime: z.string().optional(),
-  sendInApp: z.boolean().default(true),
-  sendPush: z.boolean().default(false),
-  sendEmail: z.boolean().default(false),
-});
-
-type NotificationFormValues = z.infer<typeof notificationSchema>;
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bell, Calendar, MessageSquare, Send, User, Store, Users, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const NotificationForm = () => {
-  const form = useForm<NotificationFormValues>({
-    resolver: zodResolver(notificationSchema),
-    defaultValues: {
-      title: "",
-      message: "",
-      targetApp: "customer",
-      userSegment: "",
-      notificationType: "info",
-      actionUrl: "",
-      scheduleForLater: false,
-      scheduledTime: "",
-      sendInApp: true,
-      sendPush: false,
-      sendEmail: false,
-    },
-  });
-
-  const watchScheduleForLater = form.watch("scheduleForLater");
-
-  const onSubmit = (data: NotificationFormValues) => {
-    console.log("Notification data:", data);
+  const { toast } = useToast();
+  const [recipientType, setRecipientType] = useState("specific");
+  const [scheduleSending, setScheduleSending] = useState(false);
+  const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  const [notificationType, setNotificationType] = useState("push");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
     
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Notification created successfully", {
-        description: `${data.title} will be sent to ${data.targetApp} app users`
-      });
-      form.reset();
-    }, 1000);
+    toast({
+      title: "Notification Sent",
+      description: scheduleSending 
+        ? "Your notification has been scheduled successfully!" 
+        : "Your notification has been sent successfully!",
+    });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create New Notification</CardTitle>
-        <CardDescription>
-          Send notifications to your users, riders, or vendors
-        </CardDescription>
+        <CardTitle>Create Notification</CardTitle>
+        <CardDescription>Send push notifications, emails, or SMS to users</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notification Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter notification title" />
-                    </FormControl>
-                    <FormDescription>
-                      A short, attention-grabbing title
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="targetApp"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Target Application</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select target application" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="customer">Customer App</SelectItem>
-                        <SelectItem value="rider">Rider App</SelectItem>
-                        <SelectItem value="vendor">Vendor App</SelectItem>
-                        <SelectItem value="all">All Apps</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Select which app users should receive this notification
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="userSegment"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>User Segment (Optional)</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="e.g., VIP, New Users, Inactive" />
-                    </FormControl>
-                    <FormDescription>
-                      Target specific user segments (leave empty for all users)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="notificationType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notification Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select notification type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="info">Informational</SelectItem>
-                        <SelectItem value="success">Success</SelectItem>
-                        <SelectItem value="warning">Warning</SelectItem>
-                        <SelectItem value="critical">Critical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      The type determines visual styling and urgency
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <Label className="text-base">Notification Type</Label>
+              <Tabs defaultValue="push" value={notificationType} onValueChange={setNotificationType} className="mt-2">
+                <TabsList className="grid grid-cols-3 w-full">
+                  <TabsTrigger value="push">
+                    <Bell className="h-4 w-4 mr-2" />
+                    Push
+                  </TabsTrigger>
+                  <TabsTrigger value="email">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Email
+                  </TabsTrigger>
+                  <TabsTrigger value="sms">
+                    <Send className="h-4 w-4 mr-2" />
+                    SMS
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
-
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notification Message</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field} 
-                      placeholder="Enter detailed notification message" 
-                      className="min-h-[120px]" 
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The main content of your notification
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             
-            <FormField
-              control={form.control}
-              name="actionUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Action URL (Optional)</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="https://example.com/action" />
-                  </FormControl>
-                  <FormDescription>
-                    Link to open when notification is clicked
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-2">
+              <Label className="text-base">Target App</Label>
+              <RadioGroup defaultValue="customer" className="grid grid-cols-3 gap-4 mt-2">
+                <div>
+                  <RadioGroupItem value="customer" id="customer" className="peer sr-only" />
+                  <Label
+                    htmlFor="customer"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <User className="h-6 w-6 mb-2" />
+                    <span>Customer App</span>
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="vendor" id="vendor" className="peer sr-only" />
+                  <Label
+                    htmlFor="vendor"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <Store className="h-6 w-6 mb-2" />
+                    <span>Vendor App</span>
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="rider" id="rider" className="peer sr-only" />
+                  <Label
+                    htmlFor="rider"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <Send className="h-6 w-6 mb-2" />
+                    <span>Rider App</span>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
             
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="scheduleForLater"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Schedule For Later</FormLabel>
-                      <FormDescription>
-                        Toggle to schedule this notification for a later time
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              {watchScheduleForLater && (
-                <FormField
-                  control={form.control}
-                  name="scheduledTime"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Scheduled Time</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="datetime-local"
-                          {...field}
-                          min={new Date().toISOString().slice(0, 16)}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        When this notification should be sent
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+            <div className="space-y-2">
+              <Label className="text-base">Choose Template (Optional)</Label>
+              <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a template or create from scratch" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="order-confirmation">Order Confirmation</SelectItem>
+                  <SelectItem value="delivery-update">Delivery Update</SelectItem>
+                  <SelectItem value="payment-received">Payment Received</SelectItem>
+                  <SelectItem value="welcome">Welcome Message</SelectItem>
+                  <SelectItem value="promotion">Promotional Offer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-base">Recipients</Label>
+              <RadioGroup value={recipientType} onValueChange={setRecipientType} className="grid grid-cols-1 gap-4 mt-2">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="specific" id="specific" />
+                  <Label htmlFor="specific" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Specific Users
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="segment" id="segment" />
+                  <Label htmlFor="segment" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    User Segment
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="all" id="all" />
+                  <Label htmlFor="all" className="flex items-center gap-2">
+                    <Bell className="h-4 w-4" />
+                    All Users
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            {recipientType === "specific" && (
+              <div className="space-y-2">
+                <Label htmlFor="user-ids">User IDs or Email Addresses</Label>
+                <Textarea 
+                  id="user-ids" 
+                  placeholder="Enter user IDs or email addresses, one per line"
+                  className="min-h-[80px]"
                 />
+                <p className="text-xs text-muted-foreground">
+                  Enter user IDs or email addresses, one per line or separated by commas
+                </p>
+              </div>
+            )}
+            
+            {recipientType === "segment" && (
+              <div className="space-y-2">
+                <Label htmlFor="segment">User Segment</Label>
+                <Select defaultValue="active">
+                  <SelectTrigger id="segment">
+                    <SelectValue placeholder="Select a segment" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active Users (last 30 days)</SelectItem>
+                    <SelectItem value="inactive">Inactive Users (30+ days)</SelectItem>
+                    <SelectItem value="new">New Users (last 7 days)</SelectItem>
+                    <SelectItem value="high-value">High Value Customers</SelectItem>
+                    <SelectItem value="abandoned-cart">Abandoned Cart</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            <div className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Notification Title</Label>
+                <Input id="title" placeholder="Enter notification title" />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea 
+                  id="message" 
+                  placeholder="Enter your notification message"
+                  className="min-h-[120px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  For push notifications, keep the message short and concise
+                </p>
+              </div>
+              
+              {notificationType === "push" && (
+                <div className="space-y-2">
+                  <Label htmlFor="deep-link">Deep Link URL (Optional)</Label>
+                  <Input id="deep-link" placeholder="e.g., app://orders/123" />
+                  <p className="text-xs text-muted-foreground">
+                    URL to open when the user taps the notification
+                  </p>
+                </div>
+              )}
+              
+              {notificationType === "email" && (
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Email Subject</Label>
+                  <Input id="subject" placeholder="Enter email subject" />
+                </div>
               )}
             </div>
             
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Delivery Channels</h3>
-              
-              <FormField
-                control={form.control}
-                name="sendInApp"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">In-App Notification</FormLabel>
-                      <FormDescription>
-                        Show notification within the app
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="sendPush"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Push Notification</FormLabel>
-                      <FormDescription>
-                        Send as a push notification to mobile devices
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="sendEmail"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Email Notification</FormLabel>
-                      <FormDescription>
-                        Also send this notification as an email
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+            <div className="flex items-center justify-between space-x-2 pt-2">
+              <div className="flex flex-col">
+                <span className="font-medium">Schedule for later</span>
+                <span className="text-sm text-muted-foreground">
+                  Send this notification at a specific time
+                </span>
+              </div>
+              <Switch 
+                checked={scheduleSending} 
+                onCheckedChange={setScheduleSending}
               />
             </div>
             
-            <div className="flex justify-end">
-              <Button type="submit" size="lg">
-                {watchScheduleForLater ? "Schedule Notification" : "Send Notification Now"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+            {scheduleSending && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="schedule-date">Date</Label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="schedule-date" 
+                      type="date" 
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="schedule-time">Time</Label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="schedule-time" 
+                      type="time" 
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <DialogTrigger asChild>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setShowPreviewDialog(true)}
+              className="w-full"
+            >
+              Preview Notification
+            </Button>
+          </DialogTrigger>
+        </form>
       </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button type="button" variant="outline">
+          Save as Draft
+        </Button>
+        <Button type="submit" onClick={handleSubmit}>
+          {scheduleSending ? "Schedule Notification" : "Send Now"}
+        </Button>
+      </CardFooter>
+      
+      {/* Preview Dialog */}
+      <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Notification Preview</DialogTitle>
+            <DialogDescription>
+              Preview how your notification will appear to users
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {notificationType === "push" && (
+              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+                    <Bell className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-semibold">Your App Name</p>
+                    <p className="font-medium">Sample Notification Title</p>
+                    <p className="text-sm text-muted-foreground">
+                      This is a preview of how your push notification will appear on user devices.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {notificationType === "email" && (
+              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <p className="font-medium pb-2">From: Your App &lt;notifications@yourapp.com&gt;</p>
+                <p className="font-medium pb-2">Subject: Sample Email Notification</p>
+                <div className="border-t pt-2">
+                  <p className="text-sm">
+                    Hello User,<br /><br />
+                    This is a preview of how your email notification will appear to users.<br /><br />
+                    Best regards,<br />
+                    Your App Team
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {notificationType === "sms" && (
+              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <p className="text-sm">
+                  Your App: This is a preview of how your SMS notification will appear to users.
+                </p>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button onClick={() => setShowPreviewDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
