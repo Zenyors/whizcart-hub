@@ -28,7 +28,7 @@ const SidebarNav = () => {
       {navItems.map((section, sectionIndex) => (
         <SidebarGroup key={sectionIndex} className="mb-3">
           {section.title && (
-            <SidebarGroupLabel className="px-3 py-2 text-xs uppercase font-medium text-muted-foreground">
+            <SidebarGroupLabel className="px-3 py-2 text-xs uppercase font-medium text-muted-foreground text-left">
               {section.title}
             </SidebarGroupLabel>
           )}
@@ -48,13 +48,13 @@ const SidebarNav = () => {
                         isActive={isActive}
                         tooltip={item.title}
                         onClick={hasChildren ? () => toggleExpand(item.title) : undefined}
-                        className="w-full justify-between py-2"
+                        className="w-full justify-start py-2"
                       >
                         {hasChildren ? (
                           <div className="flex w-full items-center justify-between">
                             <div className="flex items-center gap-3">
                               {item.icon && <item.icon className="h-4 w-4 shrink-0" />}
-                              <span className="text-sm font-medium">{item.title}</span>
+                              <span className="text-sm font-medium text-left">{item.title}</span>
                             </div>
                             <div className="ml-2 shrink-0">
                               {isExpanded ? (
@@ -67,9 +67,9 @@ const SidebarNav = () => {
                         ) : (
                           <Link to={item.path} className="flex w-full items-center gap-3">
                             {item.icon && <item.icon className="h-4 w-4 shrink-0" />}
-                            <span className="text-sm font-medium">{item.title}</span>
+                            <span className="text-sm font-medium text-left">{item.title}</span>
                             {item.badge && (
-                              <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold">
+                              <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-left">
                                 {item.badge}
                               </span>
                             )}
@@ -84,10 +84,10 @@ const SidebarNav = () => {
                               key={childIndex}
                               asChild
                               isActive={pathname === child.path}
-                              className="h-8 px-2"
+                              className="h-8 px-2 justify-start"
                             >
-                              <Link to={child.path} className="flex items-center">
-                                <span className="text-xs">{child.title}</span>
+                              <Link to={child.path} className="flex items-center text-left">
+                                <span className="text-xs text-left">{child.title}</span>
                               </Link>
                             </SidebarMenuButton>
                           ))}
