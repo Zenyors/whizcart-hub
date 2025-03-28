@@ -23,11 +23,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="flex min-h-screen w-full bg-background">
         <Sidebar>
           <SidebarHeader>
-            <div className="flex h-16 items-center px-4">
-              <h2 className="text-lg font-semibold">WhizCart Admin</h2>
-            </div>
+            <SidebarHeader />
           </SidebarHeader>
-          <SidebarContent className="px-2">
+          <SidebarContent className="px-2 py-2">
             <SidebarNav />
           </SidebarContent>
           <SidebarFooter />

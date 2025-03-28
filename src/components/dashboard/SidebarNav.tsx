@@ -26,9 +26,9 @@ const SidebarNav = () => {
   return (
     <div className="py-2">
       {navItems.map((section, sectionIndex) => (
-        <SidebarGroup key={sectionIndex} className="mb-2">
+        <SidebarGroup key={sectionIndex} className="mb-4">
           {section.title && (
-            <SidebarGroupLabel className="px-4 text-xs font-medium text-muted-foreground">
+            <SidebarGroupLabel className="px-4 py-2 text-xs uppercase font-medium text-muted-foreground">
               {section.title}
             </SidebarGroupLabel>
           )}
@@ -41,7 +41,7 @@ const SidebarNav = () => {
                   (hasChildren && item.children?.some(child => pathname === child.path));
 
                 return (
-                  <SidebarMenuItem key={index} className="px-2">
+                  <SidebarMenuItem key={index} className="px-2 mb-1">
                     <div className="flex flex-col w-full">
                       <SidebarMenuButton
                         asChild={!hasChildren}
@@ -53,23 +53,20 @@ const SidebarNav = () => {
                         {hasChildren ? (
                           <div className="flex w-full items-center justify-between">
                             <div className="flex items-center gap-3">
-                              {item.icon && <item.icon className="h-4 w-4" />}
+                              {item.icon && <item.icon className="h-4 w-4 shrink-0" />}
                               <span className="text-sm font-medium">{item.title}</span>
-                              {item.badge && (
-                                <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold">
-                                  {item.badge}
-                                </span>
+                            </div>
+                            <div className="ml-2 shrink-0">
+                              {isExpanded ? (
+                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
                               )}
                             </div>
-                            {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                            )}
                           </div>
                         ) : (
                           <Link to={item.path} className="flex w-full items-center gap-3">
-                            {item.icon && <item.icon className="h-4 w-4" />}
+                            {item.icon && <item.icon className="h-4 w-4 shrink-0" />}
                             <span className="text-sm font-medium">{item.title}</span>
                             {item.badge && (
                               <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold">
