@@ -19,6 +19,7 @@ import UserAnalytics from "./pages/users/UserAnalytics";
 import UserFeedback from "./pages/users/UserFeedback";
 import VipUsers from "./pages/users/VipUsers";
 import UserSupport from "./pages/users/UserSupport";
+import NewUser from "./pages/users/NewUser";
 
 // Vendor Routes
 import Vendors from "./pages/vendors/Vendors";
@@ -26,11 +27,22 @@ import VendorDetails from "./pages/vendors/VendorDetails";
 import VendorProducts from "./pages/vendors/VendorProducts";
 import VendorPayouts from "./pages/vendors/VendorPayouts";
 import AddProduct from "./pages/vendors/AddProduct";
+import NewVendor from "./pages/vendors/NewVendor";
 
-// New Routes
+// Order Routes
+import Orders from "./pages/orders/Orders";
+import NewOrder from "./pages/orders/NewOrder";
+import TrackOrder from "./pages/orders/TrackOrder";
+
+// Payment Routes
+import NewPayment from "./pages/payments/NewPayment";
+
+// Delivery Routes
 import DeliveryPartners from "./pages/delivery/DeliveryPartners";
 import AddDeliveryPartner from "./pages/delivery/AddDeliveryPartner";
-import Orders from "./pages/orders/Orders";
+import AssignDelivery from "./pages/delivery/AssignDelivery";
+
+// New Routes
 import Inventory from "./pages/inventory/Inventory";
 import Reports from "./pages/reports/Reports";
 import Settings from "./pages/settings/Settings";
@@ -60,6 +72,7 @@ const App = () => (
             
             {/* User Routes */}
             <Route path="/users" element={<Users />} />
+            <Route path="/users/new" element={<NewUser />} />
             <Route path="/users/:id" element={<UserDetails />} />
             <Route path="/users/analytics" element={<UserAnalytics />} />
             <Route path="/users/feedback" element={<UserFeedback />} />
@@ -68,17 +81,26 @@ const App = () => (
             
             {/* Vendor Routes */}
             <Route path="/vendors" element={<Vendors />} />
+            <Route path="/vendors/new" element={<NewVendor />} />
             <Route path="/vendors/:id" element={<VendorDetails />} />
             <Route path="/vendors/products" element={<VendorProducts />} />
             <Route path="/vendors/products/add" element={<AddProduct />} />
             <Route path="/vendors/payouts" element={<VendorPayouts />} />
             
+            {/* Order Routes */}
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/new" element={<NewOrder />} />
+            <Route path="/orders/track" element={<TrackOrder />} />
+            
+            {/* Payment Routes */}
+            <Route path="/payments/new" element={<NewPayment />} />
+            
             {/* Delivery Routes */}
             <Route path="/delivery-partners" element={<DeliveryPartners />} />
             <Route path="/delivery-partners/add" element={<AddDeliveryPartner />} />
+            <Route path="/delivery/assign" element={<AssignDelivery />} />
             
             {/* New Routes */}
-            <Route path="/orders" element={<Orders />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />

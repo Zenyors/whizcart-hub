@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -61,10 +62,10 @@ const QuickActionsCard = () => {
                 className="h-16 justify-start gap-4"
                 asChild
               >
-                <a href={action.href}>
+                <Link to={action.href}>
                   <Icon className="h-5 w-5" />
                   <span>{action.name}</span>
-                </a>
+                </Link>
               </Button>
             );
           })}
