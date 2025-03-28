@@ -24,24 +24,24 @@ const SidebarNav = () => {
   };
 
   return (
-    <div className="space-y-6 py-2">
+    <div className="space-y-4 py-4">
       {navItems.map((section, sectionIndex) => (
         <SidebarGroup key={sectionIndex}>
           {section.title && (
-            <SidebarGroupLabel className="px-3 pt-2 pb-1 text-xs font-medium">
+            <SidebarGroupLabel className="px-4 pt-2 pb-1 text-xs font-medium">
               {section.title}
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
-              {section.items.map((item, index) => {
+              {section.children && section.children.map((item, index) => {
                 const hasChildren = item.children && item.children.length > 0;
                 const isExpanded = expandedItems[item.title] || false;
                 const isActive = pathname === item.path || 
                   (hasChildren && item.children?.some(child => pathname === child.path));
 
                 return (
-                  <SidebarMenuItem key={index} className="my-1">
+                  <SidebarMenuItem key={index} className="my-2 px-2">
                     <div className="flex flex-col w-full">
                       <SidebarMenuButton
                         asChild={!hasChildren}
