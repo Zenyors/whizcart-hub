@@ -19,6 +19,10 @@ import { StatCard } from "@/components/ui/stat-card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RevenueOrdersChart from "./RevenueOrdersChart";
 import UserGrowthChart from "./UserGrowthChart";
+import ProductCategoriesChart from "./ProductCategoriesChart";
+import RecentOrdersTable from "./RecentOrdersTable";
+import RecentActivities from "./RecentActivities";
+import QuickActionsCard from "./QuickActionsCard";
 
 const DashboardPanel = () => {
   const [period, setPeriod] = useState("monthly");
@@ -192,6 +196,17 @@ const DashboardPanel = () => {
             <UserGrowthChart period={period} />
           </div>
         </div>
+      </div>
+
+      {/* Added sections from image */}
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+        <ProductCategoriesChart period={period} />
+        <RecentOrdersTable period={period} />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+        <RecentActivities period={period} />
+        <QuickActionsCard />
       </div>
     </div>
   );
