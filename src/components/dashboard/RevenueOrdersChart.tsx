@@ -11,7 +11,31 @@ import {
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-const data = [
+// Daily data - 7 days
+const dailyData = [
+  { name: "Mon", revenue: 280000, orders: 580 },
+  { name: "Tue", revenue: 320000, orders: 640 },
+  { name: "Wed", revenue: 350000, orders: 720 },
+  { name: "Thu", revenue: 310000, orders: 690 },
+  { name: "Fri", revenue: 390000, orders: 810 },
+  { name: "Sat", revenue: 450000, orders: 920 },
+  { name: "Sun", revenue: 420000, orders: 850 },
+];
+
+// Weekly data - 8 weeks
+const weeklyData = [
+  { name: "Week 1", revenue: 580000, orders: 1200 },
+  { name: "Week 2", revenue: 680000, orders: 1450 },
+  { name: "Week 3", revenue: 750000, orders: 1600 },
+  { name: "Week 4", revenue: 820000, orders: 1720 },
+  { name: "Week 5", revenue: 890000, orders: 1900 },
+  { name: "Week 6", revenue: 950000, orders: 2100 },
+  { name: "Week 7", revenue: 1020000, orders: 2250 },
+  { name: "Week 8", revenue: 1100000, orders: 2400 },
+];
+
+// Monthly data - 12 months
+const monthlyData = [
   { name: "Jan", revenue: 1200000, orders: 2800 },
   { name: "Feb", revenue: 1800000, orders: 3200 },
   { name: "Mar", revenue: 2200000, orders: 3600 },
@@ -26,7 +50,28 @@ const data = [
   { name: "Dec", revenue: 5000000, orders: 6300 },
 ];
 
-const RevenueOrdersChart = () => {
+// Yearly data - 5 years
+const yearlyData = [
+  { name: "2021", revenue: 24000000, orders: 48000 },
+  { name: "2022", revenue: 36000000, orders: 68000 },
+  { name: "2023", revenue: 52000000, orders: 92000 },
+  { name: "2024", revenue: 78000000, orders: 125000 },
+  { name: "2025", revenue: 92000000, orders: 148000 },
+];
+
+const RevenueOrdersChart = ({ period = "monthly" }) => {
+  // Select the appropriate data based on period
+  const getChartData = () => {
+    switch (period) {
+      case "daily": return dailyData;
+      case "weekly": return weeklyData;
+      case "yearly": return yearlyData;
+      default: return monthlyData;
+    }
+  };
+
+  const data = getChartData();
+  
   const formatRevenue = (value: number) => {
     if (value >= 1000000) {
       return `₹${(value / 1000000).toFixed(1)}M`;
