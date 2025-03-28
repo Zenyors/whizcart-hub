@@ -1,8 +1,9 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 interface StatCardProps {
   title: string;
@@ -43,7 +44,7 @@ export const StatCard = ({
   return (
     <Card
       className={cn(
-        "overflow-hidden transition-all duration-200 card-shadow",
+        "overflow-hidden transition-all duration-200",
         className
       )}
       style={{ 
@@ -51,43 +52,52 @@ export const StatCard = ({
         borderTop: color ? `3px solid ${color}` : undefined,
       }}
     >
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <p className={cn("text-sm font-medium text-muted-foreground", titleClassName)}>{title}</p>
-          {Icon && (
-            <div className={cn("rounded-md bg-secondary p-2", iconClassName)}>
-              <Icon className={cn("h-4 w-4 text-foreground opacity-70", color ? `text-${color}` : "")} />
-            </div>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         {isLoading ? (
           <div className="space-y-2">
             <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
             {description && <div className="h-4 w-full animate-pulse rounded-md bg-muted" />}
           </div>
         ) : (
-          <div className="space-y-1">
-            <div className="flex items-baseline">
-              <h2 className={cn("text-2xl font-bold tracking-tight", valueClassName)}>
-                {value}
-              </h2>
-              {trend && (
-                <span
-                  className={cn(
-                    "ml-2 text-xs font-medium",
-                    trend.positive ? "text-emerald-500" : "text-red-500",
-                    trendClassName
-                  )}
-                >
-                  {trend.positive ? "+" : "-"}
-                  {trend.value}%
-                </span>
-              )}
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              <p className={cn("text-sm font-medium text-muted-foreground", titleClassName)}>
+                {title}
+              </p>
+              <div className="space-y-1">
+                <h2 className={cn("text-3xl font-bold", valueClassName)}>
+                  {value}
+                </h2>
+                {trend && (
+                  <div className="flex items-center gap-1">
+                    {trend.positive ? (
+                      <ArrowUp className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <ArrowDown className="h-4 w-4 text-red-500" />
+                    )}
+                    <span
+                      className={cn(
+                        "text-sm font-medium",
+                        trend.positive ? "text-emerald-500" : "text-red-500",
+                        trendClassName
+                      )}
+                    >
+                      {trend.value}%
+                    </span>
+                    {description && (
+                      <span className={cn("text-sm text-muted-foreground", descriptionClassName)}>
+                        {description}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-            {description && (
-              <p className={cn("text-xs text-muted-foreground", descriptionClassName)}>{description}</p>
+            
+            {Icon && (
+              <div className={cn("rounded-full bg-primary/10 p-3", iconClassName)}>
+                <Icon className={cn("h-5 w-5 text-primary")} />
+              </div>
             )}
           </div>
         )}
