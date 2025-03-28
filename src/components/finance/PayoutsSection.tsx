@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Card, 
@@ -483,11 +482,11 @@ const PayoutsSection = () => {
         </CardContent>
       </Card>
 
-      {/* New Payout Dialog */}
+      {/* New Payout Dialog - Improved for better alignment and responsiveness */}
       <Dialog open={showNewPayoutDialog} onOpenChange={setShowNewPayoutDialog}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Create New Payout</DialogTitle>
+        <DialogContent className="w-full max-w-md md:max-w-lg mx-auto p-6 overflow-y-auto max-h-[90vh]">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-xl">Create New Payout</DialogTitle>
             <DialogDescription>
               Schedule a new payout to a vendor or delivery partner
             </DialogDescription>
@@ -500,17 +499,17 @@ const PayoutsSection = () => {
                 name="partnerType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Partner Type</FormLabel>
+                    <FormLabel className="text-sm font-medium">Partner Type</FormLabel>
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select partner type" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="w-full max-h-[200px]">
                         <SelectItem value="vendor">Vendor</SelectItem>
                         <SelectItem value="delivery">Delivery Partner</SelectItem>
                       </SelectContent>
@@ -525,17 +524,17 @@ const PayoutsSection = () => {
                 name="partner"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Partner</FormLabel>
+                    <FormLabel className="text-sm font-medium">Partner</FormLabel>
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select partner" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="w-full max-h-[200px]">
                         {form.watch("partnerType") === "vendor" ? (
                           mockVendorPayouts.map(vendor => (
                             <SelectItem key={vendor.vendor} value={vendor.vendor}>
@@ -565,9 +564,9 @@ const PayoutsSection = () => {
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount (₹)</FormLabel>
+                    <FormLabel className="text-sm font-medium">Amount (₹)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter amount" {...field} />
+                      <Input placeholder="Enter amount" {...field} className="w-full" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -579,9 +578,9 @@ const PayoutsSection = () => {
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Due Date</FormLabel>
+                    <FormLabel className="text-sm font-medium">Due Date</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" {...field} className="w-full" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -593,17 +592,17 @@ const PayoutsSection = () => {
                 name="paymentMethod"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Payment Method</FormLabel>
+                    <FormLabel className="text-sm font-medium">Payment Method</FormLabel>
                     <Select 
                       onValueChange={field.onChange} 
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select payment method" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="w-full">
                         <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
                         <SelectItem value="UPI">UPI</SelectItem>
                         <SelectItem value="Check">Check</SelectItem>
@@ -619,11 +618,11 @@ const PayoutsSection = () => {
                 name="reference"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Reference (Optional)</FormLabel>
+                    <FormLabel className="text-sm font-medium">Reference (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter reference number" {...field} />
+                      <Input placeholder="Enter reference number" {...field} className="w-full" />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-xs">
                       Invoice number or other reference
                     </FormDescription>
                     <FormMessage />
@@ -636,16 +635,16 @@ const PayoutsSection = () => {
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormLabel className="text-sm font-medium">Notes (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Add notes" {...field} />
+                      <Input placeholder="Add notes" {...field} className="w-full" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               
-              <DialogFooter>
+              <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-2 sm:gap-0">
                 <Button type="button" variant="outline" onClick={() => setShowNewPayoutDialog(false)}>
                   Cancel
                 </Button>
