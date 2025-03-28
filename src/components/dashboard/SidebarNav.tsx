@@ -26,9 +26,9 @@ const SidebarNav = () => {
   return (
     <div className="py-2">
       {navItems.map((section, sectionIndex) => (
-        <SidebarGroup key={sectionIndex} className="mb-4">
+        <SidebarGroup key={sectionIndex} className="mb-3">
           {section.title && (
-            <SidebarGroupLabel className="px-4 py-2 text-xs uppercase font-medium text-muted-foreground">
+            <SidebarGroupLabel className="px-3 py-2 text-xs uppercase font-medium text-muted-foreground">
               {section.title}
             </SidebarGroupLabel>
           )}
