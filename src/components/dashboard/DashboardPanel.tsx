@@ -19,6 +19,7 @@ import { StatCard } from "@/components/ui/stat-card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RevenueOrdersChart from "./RevenueOrdersChart";
 import UserGrowthChart from "./UserGrowthChart";
+import FinanceOverview from "@/components/finance/FinanceOverview";
 
 const DashboardPanel = () => {
   const [period, setPeriod] = useState("monthly");
@@ -129,6 +130,15 @@ const DashboardPanel = () => {
             <UserGrowthChart />
           </div>
         </div>
+      </div>
+      
+      {/* Finance Overview */}
+      <div className="bg-card rounded-lg border shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">Financial Overview</h3>
+          <span className="text-sm text-muted-foreground">Monthly breakdown</span>
+        </div>
+        <FinanceOverview />
       </div>
     </div>
   );
