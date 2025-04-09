@@ -61,26 +61,27 @@ const LoginForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-sm animate-fade-in">
-        <div className="space-y-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-1 text-left">
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="text-sm text-muted-foreground">
             Enter your credentials to access your account
           </p>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="text-left">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="admin@whizcart.com" 
                     {...field} 
-                    className="input-minimal" 
+                    className="w-full" 
+                    autoComplete="email"
                     autoFocus
                     disabled={isLoading}
                   />
@@ -94,15 +95,16 @@ const LoginForm = () => {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="text-left">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       placeholder="••••••••"
                       type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
                       {...field}
-                      className="input-minimal pr-10"
+                      className="w-full pr-10"
                       disabled={isLoading}
                     />
                     <Button
@@ -126,13 +128,13 @@ const LoginForm = () => {
           />
 
           <div className="flex items-center justify-end">
-            <Button variant="link" className="px-0 font-normal text-xs h-auto" disabled={isLoading}>
+            <Button variant="link" className="px-0 font-normal text-xs h-auto text-left" disabled={isLoading}>
               Forgot password?
             </Button>
           </div>
         </div>
 
-        <Button type="submit" className="w-full btn-animate" disabled={isLoading}>
+        <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
