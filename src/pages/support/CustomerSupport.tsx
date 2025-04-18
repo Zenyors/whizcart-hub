@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { 
@@ -98,6 +97,7 @@ const CustomerSupport = () => {
       title: "Support Ticket Created",
       description: "Your ticket has been submitted successfully. We'll get back to you soon.",
     });
+    setActiveTab("tickets");
   };
 
   return (

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -10,7 +9,7 @@ import PageHeader from "@/components/shared/PageHeader";
 // Import new components
 import TicketListSidebar from "@/components/support/tickets/TicketListSidebar";
 import TicketDetails from "@/components/support/tickets/TicketDetails";
-import NewTicketDialog from "@/components/support/tickets/NewTicketDialog";
+import NewTicketDialog, { NewTicketFormData } from "@/components/support/tickets/NewTicketDialog";
 import SupportStats from "@/components/support/tickets/SupportStats";
 import SupportPerformanceCard from "@/components/support/tickets/SupportPerformanceCard";
 import CommonIssuesCard from "@/components/support/tickets/CommonIssuesCard";
@@ -44,7 +43,7 @@ const UserSupport = () => {
     return matchesSearch;
   });
 
-  const handleSelectTicket = (ticket: any) => {
+  const handleSelectTicket = (ticket: Ticket) => {
     setSelectedTicket(ticket);
   };
 
@@ -80,33 +79,28 @@ const UserSupport = () => {
     });
   };
 
-  const handleCreateNewTicket = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    
+  const handleCreateNewTicket = (data: NewTicketFormData) => {
     const newTicket: Ticket = {
       id: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
       customer: {
-        name: formData.get('customerName') as string,
-        email: formData.get('customerEmail') as string,
+        name: data.customerName,
+        email: data.customerEmail,
         id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
-        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.get('customerName')}`,
-        phone: formData.get('customerPhone') as string || undefined,
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.customerName}`,
+        phone: data.customerPhone,
       },
-      subject: formData.get('subject') as string,
-      description: formData.get('description') as string,
-      status: "Open", // Using the literal string type
-      priority: formData.get('priority') as "Low" | "Medium" | "High" | "Urgent",
-      category: formData.get('category') as string,
+      subject: data.subject,
+      description: data.description,
+      status: "Open",
+      priority: data.priority,
+      category: data.category,
       createdAt: new Date().toLocaleDateString(),
       updatedAt: new Date().toLocaleDateString(),
       assignedTo: null,
       messages: [
         {
           sender: "Customer",
-          text: formData.get('description') as string,
+          text: data.description,
           timestamp: new Date().toLocaleString(),
         }
       ],
@@ -167,6 +161,7 @@ const UserSupport = () => {
             selectedTicket={selectedTicket}
             handleSelectTicket={handleSelectTicket}
             setSelectedTab={setSelectedTab}
+            setIsNewTicketDialogOpen={setIsNewTicketDialogOpen}
           />
           
           <TicketDetails 

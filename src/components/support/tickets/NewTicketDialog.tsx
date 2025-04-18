@@ -7,18 +7,52 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface NewTicketDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  handleCreateNewTicket: (e: React.FormEvent) => void;
+  handleCreateNewTicket: (formData: NewTicketFormData) => void;
 }
+
+const ticketSchema = z.object({
+  customerName: z.string().min(2, "Name is required"),
+  customerEmail: z.string().email("Valid email is required"),
+  customerPhone: z.string().optional(),
+  priority: z.enum(["Low", "Medium", "High", "Urgent"]).default("Medium"),
+  category: z.string().min(1, "Category is required"),
+  subject: z.string().min(3, "Subject is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+});
+
+export type NewTicketFormData = z.infer<typeof ticketSchema>;
 
 const NewTicketDialog: React.FC<NewTicketDialogProps> = ({
   isOpen,
   setIsOpen,
   handleCreateNewTicket,
 }) => {
+  const form = useForm<NewTicketFormData>({
+    resolver: zodResolver(ticketSchema),
+    defaultValues: {
+      customerName: "",
+      customerEmail: "",
+      customerPhone: "",
+      priority: "Medium",
+      category: "",
+      subject: "",
+      description: "",
+    }
+  });
+  
+  const onSubmit = (data: NewTicketFormData) => {
+    handleCreateNewTicket(data);
+    form.reset();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -31,79 +65,156 @@ const NewTicketDialog: React.FC<NewTicketDialogProps> = ({
         <DialogHeader>
           <DialogTitle>Create Support Ticket</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleCreateNewTicket} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="customerName">Customer Name</Label>
-              <Input id="customerName" name="customerName" required />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="customerName">Customer Name</Label>
+                <FormField
+                  control={form.control}
+                  name="customerName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input id="customerName" {...field} required />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="customerEmail">Customer Email</Label>
+                <FormField
+                  control={form.control}
+                  name="customerEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input id="customerEmail" type="email" {...field} required />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="customerEmail">Customer Email</Label>
-              <Input id="customerEmail" name="customerEmail" type="email" required />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="customerPhone">Customer Phone (Optional)</Label>
+                <FormField
+                  control={form.control}
+                  name="customerPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input id="customerPhone" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="priority">Priority</Label>
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select 
+                        defaultValue={field.value} 
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Low">Low</SelectItem>
+                          <SelectItem value="Medium">Medium</SelectItem>
+                          <SelectItem value="High">High</SelectItem>
+                          <SelectItem value="Urgent">Urgent</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
+            
             <div className="space-y-2">
-              <Label htmlFor="customerPhone">Customer Phone (Optional)</Label>
-              <Input id="customerPhone" name="customerPhone" />
+              <Label htmlFor="category">Category</Label>
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select 
+                      defaultValue={field.value} 
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Billing">Billing</SelectItem>
+                        <SelectItem value="Technical">Technical</SelectItem>
+                        <SelectItem value="Account">Account</SelectItem>
+                        <SelectItem value="Product">Product</SelectItem>
+                        <SelectItem value="Shipping">Shipping</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
             </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
-              <select 
-                id="priority" 
-                name="priority"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                defaultValue="Medium"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-                <option value="Urgent">Urgent</option>
-              </select>
+              <Label htmlFor="subject">Subject</Label>
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input id="subject" {...field} required />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <select 
-              id="category" 
-              name="category"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              defaultValue=""
-            >
-              <option value="" disabled>Select a category</option>
-              <option value="Billing">Billing</option>
-              <option value="Technical">Technical</option>
-              <option value="Account">Account</option>
-              <option value="Product">Product</option>
-              <option value="Shipping">Shipping</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
-            <Input id="subject" name="subject" required />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              rows={5}
-              required
-            />
-          </div>
-          
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit">Create Ticket</Button>
-          </div>
-        </form>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        id="description"
+                        rows={5}
+                        {...field}
+                        required
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Create Ticket</Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
