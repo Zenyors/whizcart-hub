@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,8 +48,8 @@ const LoginForm = () => {
     setTimeout(() => {
       setIsLoading(false);
       
-      // Mock credentials check - replace with actual authentication
-      if (data.email === "admin@whizcart.com" && data.password === "password123") {
+      // Updated credentials check
+      if (data.email === "admin@whizcartt.com" && data.password === "zenyor") {
         toast.success("Welcome back, Admin");
         navigate("/dashboard");
       } else {
@@ -78,7 +77,7 @@ const LoginForm = () => {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="admin@whizcart.com" 
+                    placeholder="admin@whizcartt.com" 
                     {...field} 
                     className="w-full" 
                     autoComplete="email"
